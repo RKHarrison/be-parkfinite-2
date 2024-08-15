@@ -13,10 +13,11 @@ from api.schemas.review_schemas import ReviewCreateRequest, Review, ReviewUpdate
 from api.schemas.user_schemas import User
 from api.errors.error_handling import (
     validation_exception_handler, attribute_error_handler,  http_exception_handler, sqlalchemy_exception_handler)
+import auth
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI()
-
+app.include_router(auth.router)
 
 def get_db():
     db = SessionLocal()
