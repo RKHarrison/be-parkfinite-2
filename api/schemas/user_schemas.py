@@ -18,10 +18,12 @@ class UserBase(BaseModel):
 
 class CreateUserRequest(UserBase):
     username: str
-    user_password: str
+    password: str
 
 
 class User(UserBase):
+    username: str
+    hashed_password: str
     favourites: list[Campsite] = []
 
 

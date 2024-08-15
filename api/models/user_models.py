@@ -26,5 +26,5 @@ class User(Base):
     # xp = Column(Integer, default=0)
     # user_type = Column(String, default="NORMAL")
     # camera_permission = Column(Boolean, default=False)
-    # favourites: Mapped[List["Campsite"]] = relationship(
-    #     'Campsite', secondary=user_campsite_favourites, back_populates='favourited_by')
+    favourites: Mapped[List["Campsite"]] = relationship(
+        'Campsite', secondary=user_campsite_favourites, back_populates='favourited_by')
