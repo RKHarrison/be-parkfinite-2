@@ -16,13 +16,15 @@ user_campsite_favourites = Table(
 class User(Base):
     __tablename__ = "users"
 
-    username = Column(String(30), primary_key=True)
-    user_password = Column(String)
-    user_firstname = Column(String)
-    user_lastname = Column(String)
-    user_email = Column(String)
-    xp = Column(Integer, default=0)
-    user_type = Column(String, default="NORMAL")
-    camera_permission = Column(Boolean, default=False)
-    favourites: Mapped[List["Campsite"]] = relationship(
-        'Campsite', secondary=user_campsite_favourites, back_populates='favourited_by')
+    user_id = Column(Integer, primary_key=True, index=True)
+    username = Column(String(30), unique=True)
+    hashed_password = Column(String)
+
+    # user_firstname = Column(String)
+    # user_lastname = Column(String)
+    # user_email = Column(String)
+    # xp = Column(Integer, default=0)
+    # user_type = Column(String, default="NORMAL")
+    # camera_permission = Column(Boolean, default=False)
+    # favourites: Mapped[List["Campsite"]] = relationship(
+    #     'Campsite', secondary=user_campsite_favourites, back_populates='favourited_by')
