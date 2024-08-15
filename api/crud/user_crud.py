@@ -9,14 +9,14 @@ def read_users(db):
 
 
 def read_user_by_username(db, username):
-    user = db.get(User, username)
+    user = user = db.query(User).filter(User.username == username).first()
     if not user:
         raise HTTPException(status_code=404, detail="404 - User Not Found!")
     return user
 
 
 def update_user_xp(db, username, xp):
-    user = db.get(User, username)
+    user = user = db.query(User).filter(User.username == username).first()
     if not user:
         raise HTTPException(status_code=404, detail="404 - User Not Found!")
 
