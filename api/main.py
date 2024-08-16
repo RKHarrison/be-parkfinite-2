@@ -4,7 +4,7 @@ from fastapi import FastAPI, Depends
 from fastapi.exceptions import RequestValidationError, HTTPException
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
-from database.database import SessionLocal, engine, Base
+from database.database import engine, Base
 from database.database_utils.get_db import get_db
 from api.crud.campsite_crud import create_campsite, read_campsites, read_campsite_by_id
 from api.crud.reviews_crud import create_review_by_campsite_id, read_reviews_by_campsite_id, update_review_by_review_id, remove_review_by_review_id
