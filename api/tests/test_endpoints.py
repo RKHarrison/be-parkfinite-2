@@ -519,7 +519,7 @@ class TestPatchReviewsByReviewId:
         assert error['detail'] == "404 - Campsite Not Found!"
 
 
-@pytest.mark.current
+@pytest.mark.main
 class TestDeleteReviewsByReviewId:
     def test_remove_review_by_review_id(self, test_db):
         response = client.delete("/reviews/4")
@@ -528,6 +528,14 @@ class TestDeleteReviewsByReviewId:
     def test_404_non_existent_review(self, test_db):
         response = client.delete("/reviews/987654321")
         assert response.status_code == 404
+
+
+@pytest.mark.current
+class TestPostUser:
+    def test_create_user(self, test_db):
+        request_body = {"username": "Rich1234", "password": "secret123"}
+        response = client.post("/auth", json=request_body)
+        assert response.status_code == 201
 
 
 @pytest.mark.main
