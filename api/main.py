@@ -5,6 +5,7 @@ from fastapi.exceptions import RequestValidationError, HTTPException
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from database.database import SessionLocal, engine, Base
+from database.database_utils.get_db import get_db
 from api.crud.campsite_crud import create_campsite, read_campsites, read_campsite_by_id
 from api.crud.reviews_crud import create_review_by_campsite_id, read_reviews_by_campsite_id, update_review_by_review_id, remove_review_by_review_id
 from api.crud.user_crud import read_users, read_user_by_username, update_user_xp, create_user_favourite_campsite, read_user_campsite_favourites_by_username, remove_user_favourite_campsite
@@ -19,12 +20,7 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 app.include_router(auth.router)
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+
 
 
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
