@@ -1,10 +1,10 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from database.database_utils.get_db import get_db
 
 from starlette import status
 
-from database.database import SessionLocal
 from api.models.user_models import User
 from api.schemas.user_schemas import CreateUserRequest
 
@@ -21,12 +21,6 @@ ALGORITHM = 'HS256'
 
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
 
-def get_db():
-    db=SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
@@ -39,7 +33,7 @@ def create_user(db: db_dependency, create_user_request: CreateUserRequest):
 
     db.add(create_user_model)
     db.commit()
-
+    db.refresh(create_user_model)
 
 def hash_password(password):
     pwd_bytes = password.encode('utf-8')
