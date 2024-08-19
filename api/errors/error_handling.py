@@ -12,9 +12,11 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     formatted_errors = []
 
     for error in errors:
+        print('here')
         error_location = error['loc'][-1].capitalize()
         trimmed_default_error_message = ' '.join(error['msg'].split(' ')[1:])
         user_readable_error_message = f"{error_location} {trimmed_default_error_message}"
+        print(user_readable_error_message)
         
         formatted_errors.append({
             "loc": error['loc'],
@@ -23,7 +25,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content=jsonable_encoder({"detail": errors, "body": exc.body}),
+        content=jsonable_encoder({"detail": formatted_errors, "body": exc.body}),
     )
 
 

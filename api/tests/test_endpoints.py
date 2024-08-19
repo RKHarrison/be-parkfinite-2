@@ -547,7 +547,7 @@ class TestDeleteReviewsByReviewId:
         assert response.status_code == 404
 
 
-@pytest.mark.current
+@pytest.mark.main
 class TestPostUser:
     def test_create_user(self, test_db_class_scope):
         request_body = {"username": "Rich1234", "password": "secret123!"}
@@ -576,7 +576,7 @@ class TestPostUser:
 
         assert response.status_code == 422
         assert response.json()[
-            'detail'][0]['msg'] == "Value error, Username should be between 6 and 30 characters."
+            'detail'][0]['msg'] == "Username error, Username should be between 6 and 30 characters."
 
     def test_422_invalid_username_characters(self, test_db):
         request_body = {
@@ -585,7 +585,7 @@ class TestPostUser:
 
         assert response.status_code == 422
         assert response.json()[
-            'detail'][0]['msg'] == "Value error, Username must be alphanumeric and can include underscores."
+            'detail'][0]['msg'] == "Username error, Username must be alphanumeric and can include underscores."
 
     def test_422_invalid_password_length(self, test_db):
         request_body = {"username": "Rich1234", "password": "SHORT!"}
@@ -593,7 +593,7 @@ class TestPostUser:
 
         assert response.status_code == 422
         assert response.json()[
-            'detail'][0]['msg'] == "Value error, Password should be between 8 and 64 characters."
+            'detail'][0]['msg'] == "Password error, Password should be between 8 and 64 characters."
 
     def test_422_invalid_password_requires_digit(self, test_db):
         request_body = {"username": "Rich1234", "password": "NODIGITS"}
@@ -601,7 +601,7 @@ class TestPostUser:
 
         assert response.status_code == 422
         assert response.json()[
-            'detail'][0]['msg'] == "Value error, Password must include at least one digit."
+            'detail'][0]['msg'] == "Password error, Password must include at least one digit."
 
     def test_422_invalid_password_requires_special_character(self, test_db):
         request_body = {"username": "Rich1234",
@@ -610,7 +610,12 @@ class TestPostUser:
 
         assert response.status_code == 422
         assert response.json()[
-            'detail'][0]['msg'] == "Value error, Password must include at least one special character."
+            'detail'][0]['msg'] == "Password error, Password must include at least one special character."
+
+# @pytest.mark.current
+# class TestAuthenticateUser:
+#     def test_login_and_get_access_token(self, test_db):
+
 
 
 @pytest.mark.main
