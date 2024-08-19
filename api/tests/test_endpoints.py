@@ -560,6 +560,13 @@ class TestPostUser:
         assert isinstance(user.hashed_password, bytes)
         assert isinstance(user.user_id, int)
 
+    def test_409_conflict_if_username_already_exists(self, test_db_class_scope):
+        request_body = {"username": "Rich1234", "password": "secret123"}
+        response = client.post("/auth", json=request_body)
+
+        assert response.status_code == 409
+        assert response.json()['detail'] == 'Username already exists.'
+
 
 @pytest.mark.main
 class TestGetUsers:
