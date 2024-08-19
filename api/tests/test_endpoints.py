@@ -51,6 +51,21 @@ def test_db():
         test_session.close()
 
 
+@pytest.fixture(scope='class')
+def test_db_class_scope():
+    Base.metadata.drop_all(test_engine)
+    Base.metadata.create_all(test_engine)
+    test_session = override_get_db()
+
+    try:
+        test_data = get_test_data()
+        seed_database(test_session, test_data)
+        yield test_session
+    finally:
+        Base.metadata.drop_all(test_engine)
+        test_session.close()
+
+
 @pytest.mark.main
 class TestPostCampsite:
     def test_basic_campsite_with_category(self, test_db):
