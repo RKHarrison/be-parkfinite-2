@@ -14,6 +14,9 @@ class UserBase(BaseModel):
     def validate_username(cls, username):
         if len(username) < 6 or len(username) > 30:
             raise ValueError('Username should be between 6 and 30 characters.')
+        if not re.match('^[a-zA-Z0-9_]*$', username):
+            raise ValueError(
+                'Username must be alphanumeric and can include underscores.')
         return username
 
 
