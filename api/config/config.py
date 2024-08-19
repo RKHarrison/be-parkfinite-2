@@ -8,4 +8,7 @@ if environment == 'production':
 else:
     load_dotenv('.env.development')
 
+load_dotenv('.env.pre_hashed_user_password')
+
 DATABASE_URL = os.getenv('DATABASE_URL')
+PRE_HASHED_USER_PASSWORD = os.getenv('PRE_HASHED_USER_PASSWORD')

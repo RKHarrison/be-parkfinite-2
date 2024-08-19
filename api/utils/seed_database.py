@@ -1,4 +1,6 @@
-from api.models.user_models import user_campsite_favourites
+from api.models.user_models import user_campsite_favourites, User
+from api.config.config import PRE_HASHED_USER_PASSWORD
+
 
 
 def seed_categories(session, categories):
@@ -38,7 +40,14 @@ def seed_contacts(session, contacts):
 
 
 def seed_users(session, users):
+    # Pre-hashed password to speed up the seeding process
+    # This password was generated using the `hash_password` utility function.
+    # It must be stored in a .ENV named .env.pre_hashed_user_password
+    # under the name PRE_HASHED_USER_PASSWORD
+    # If you need to update the password or set up a new local repo... 
+    # generate a new hash using: `hash_password('your_password_here').decode('utf-8')`
     for user in users:
+        user.hashed_password = PRE_HASHED_USER_PASSWORD
         session.add(user)
     session.commit()
 
