@@ -23,6 +23,18 @@ class UserBase(BaseModel):
 class CreateUserRequest(UserBase):
     password: str
 
+    @field_validator('password')
+    @classmethod
+    def validate_password_strength(cls, password):
+        if len(password) < 8 or len(password) > 64:
+            raise ValueError('Password should be between 8 and 64 characters.')
+        if not re.search(r"\d", password):
+            raise ValueError('Password must include at least one digit.')
+        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+            raise ValueError(
+                'Password must include at least one special character.')
+        return password
+
 
 class User(UserBase):
     hashed_password: str
