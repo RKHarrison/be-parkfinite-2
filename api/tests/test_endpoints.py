@@ -578,7 +578,7 @@ class TestPostUser:
         assert response.status_code == 422
         assert response.json()[
             'detail'][0]['msg'] == "Value error, Username should be between 6 and 30 characters."
-        
+
     def test_422_invalid_username_characters(self, test_db):
         request_body = {
             "username": "HAS_INVALID_CHARS_&^%$£@!", "password": "secret123"}
@@ -588,7 +588,31 @@ class TestPostUser:
         assert response.status_code == 422
         assert response.json()[
             'detail'][0]['msg'] == "Value error, Username must be alphanumeric and can include underscores."
+
+    def test_422_invalid_password_length(self, test_db):
+        request_body = {"username": "Rich1234", "password": "SHORT!"}
+        response = client.post("/auth", json=request_body)
+
+        assert response.status_code == 422
+        assert response.json()[
+            'detail'][0]['msg'] == "Value error, Password should be between 8 and 64 characters."
         
+    def test_422_invalid_password_requires_digit(self, test_db):
+        request_body = {"username": "Rich1234", "password": "NODIGITS"}
+        response = client.post("/auth", json=request_body)
+
+        assert response.status_code == 422
+        assert response.json()[
+            'detail'][0]['msg'] == "Value error, Password must include at least one digit."
+
+    def test_422_invalid_password_requires_special_character(self, test_db):
+        request_body = {"username": "Rich1234", "password": "NEEDS1SPECIALCHAR"}
+        response = client.post("/auth", json=request_body)
+
+        assert response.status_code == 422
+        assert response.json()[
+            'detail'][0]['msg'] == "Value error, Password must include at least one special character."
+
 @pytest.mark.main
 class TestGetUsers:
     def test_read_users(self, test_db):
