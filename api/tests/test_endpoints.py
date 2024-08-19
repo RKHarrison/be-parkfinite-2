@@ -553,7 +553,8 @@ class TestPostUser:
         request_body = {"username": "Rich1234", "password": "secret123"}
         response = client.post("/auth", json=request_body)
         assert response.status_code == 201
-        assert response.json()['message'] == "User created successfully, please log in to continue."
+        assert response.json()[
+            'message'] == "User created successfully, please log in to continue."
 
         user = test_db_class_scope.query(User).filter(
             User.username == "Rich1234").first()
