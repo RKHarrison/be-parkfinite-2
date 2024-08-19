@@ -1,5 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from api.schemas.campsite_schemas import Campsite
+import re
 
 
 class UserBase(BaseModel):
@@ -7,6 +8,13 @@ class UserBase(BaseModel):
 
     class ConfigDict:
         from_attributes = True
+
+    @field_validator('username')
+    @classmethod
+    def validate_username(cls, username):
+        if len(username) < 6 or len(username) > 30:
+            raise ValueError('Username should be between 6 and 30 characters.')
+        return username
 
 
 class CreateUserRequest(UserBase):
