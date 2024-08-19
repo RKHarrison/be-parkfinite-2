@@ -406,7 +406,7 @@ class TestPostReviewByCampsiteId:
         error = response.json()
         print(error)
         assert "comment" in error['detail'][0]['loc']
-        assert error['detail'][0]['msg'] == 'String should have at most 350 characters'
+        assert error['detail'][0]['msg'] == 'Comment should have at most 350 characters'
 
     def test_422_field_missing_from_request_body(self, test_db):
         request_body = {
@@ -504,7 +504,7 @@ class TestPatchReviewsByReviewId:
         assert response.status_code == 422
         error = response.json()
         assert "comment" in error['detail'][0]['loc']
-        assert error['detail'][0]['msg'] == 'String should have at most 350 characters'
+        assert error['detail'][0]['msg'] == 'Comment should have at most 350 characters'
 
     def test_422_field_missing_from_request_body(self, test_db):
         request_body = {
@@ -553,6 +553,7 @@ class TestPostUser:
         request_body = {"username": "Rich1234", "password": "secret123"}
         response = client.post("/auth", json=request_body)
         assert response.status_code == 201
+        assert response.json()['message'] == "User created successfully, please log in to continue."
 
         user = test_db_class_scope.query(User).filter(
             User.username == "Rich1234").first()
