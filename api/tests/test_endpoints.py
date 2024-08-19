@@ -569,6 +569,16 @@ class TestPostUser:
         assert response.status_code == 409
         assert response.json()['detail'] == 'Username already exists.'
 
+    def test_422_invalid_username_length(self, test_db):
+        request_body = {
+            "username": "THIS_USERNAME_IS_MORE_THAN_THIRTY_CHARACTERS", "password": "secret123"}
+        response = client.post("/auth", json=request_body)
+
+        print('ERROR', response.json()['detail'][0]['msg'])
+        assert response.status_code == 422
+        assert response.json()[
+            'detail'][0]['msg'] == "Value error, Username should be between 6 and 30 characters."
+
 
 @pytest.mark.main
 class TestGetUsers:
