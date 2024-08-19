@@ -31,18 +31,20 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 def create_user(db: db_dependency, create_user_request: CreateUserRequest):
+
+    existing_user = db.query(User).filter(
+        User.username == create_user_request.username).first()
+    if existing_user:
+        raise HTTPException(status_code=409, detail="Username already exists.")
+
     create_user_model = User(
         username=create_user_request.username,
         hashed_password=hash_password(create_user_request.password)
     )
 
-    try:
-        db.add(create_user_model)
-        db.commit()
-        db.refresh(create_user_model)
-    except IntegrityError as e:
-        db.rollback()
-        raise HTTPException(status_code=409, detail="Username already exists.")
+    db.add(create_user_model)
+    db.commit()
+    db.refresh(create_user_model)
 
 
 def hash_password(password):
@@ -50,6 +52,7 @@ def hash_password(password):
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(password=pwd_bytes, salt=salt)
     return hashed_password
+
 
 def verify_password(plain_password, hashed_password):
     password_byte_enc = plain_password.encode('utf-8')
