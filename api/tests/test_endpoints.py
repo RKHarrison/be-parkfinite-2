@@ -11,6 +11,8 @@ from api.data.test_data import get_test_data
 from api.utils.seed_database import seed_database
 from api.utils.test_utils import is_valid_date
 
+from api.models.user_models import User
+
 from os import environ
 environ['ENV'] = 'development'
 
@@ -532,10 +534,16 @@ class TestDeleteReviewsByReviewId:
 
 @pytest.mark.current
 class TestPostUser:
-    def test_create_user(self, test_db):
+    def test_create_user(self, test_db_class_scope):
         request_body = {"username": "Rich1234", "password": "secret123"}
         response = client.post("/auth", json=request_body)
         assert response.status_code == 201
+
+        user = test_db_class_scope.query(User).filter(
+            User.username == "Rich1234").first()
+        assert user.username == "Rich1234"
+        assert isinstance(user.hashed_password, bytes)
+        assert isinstance(user.user_id, int)
 
 
 @pytest.mark.main
