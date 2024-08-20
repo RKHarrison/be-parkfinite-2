@@ -612,9 +612,13 @@ class TestPostUser:
         assert response.json()[
             'detail'][0]['msg'] == "Password error, Password must include at least one special character."
 
-# @pytest.mark.current
-# class TestAuthenticateUser:
-#     def test_login_and_get_access_token(self, test_db):
+@pytest.mark.current
+class TestAuthenticateUser:
+    def test_login_and_get_access_token(self, test_db):
+        request_body = {"username": "NatureExplorer", "password": "secret123!"}
+        response = client.post("auth/token", data=request_body)
+
+        assert response.status_code == 200
 
 
 
