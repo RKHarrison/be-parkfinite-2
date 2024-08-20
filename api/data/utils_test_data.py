@@ -182,11 +182,11 @@ def get_complete_seed_test_data():
                    comment="A forest haven. Quiet, peaceful, and beautifully green.")
         ],
         'user': [
-            User(username="NatureExplorer", user_password="secure123", user_firstname="Alice", user_lastname="Wanderlust",
+            User(username="NatureExplorer", hashed_password="secure123", user_firstname="Alice", user_lastname="Wanderlust",
                  user_email="alice@example.com", xp=500, user_type="NORMAL", camera_permission=True),
-            User(username="PeakHiker92", user_password="secure123", user_firstname="Bob", user_lastname="Hills",
+            User(username="PeakHiker92", hashed_password="secure123", user_firstname="Bob", user_lastname="Hills",
                  user_email="bob92@example.com", xp=0, user_type="NORMAL", camera_permission=True),
-            User(username="ForestFanatic", user_password="secure123", user_firstname="Clara", user_lastname="Greenwood",
+            User(username="ForestFanatic", hashed_password="secure123", user_firstname="Clara", user_lastname="Greenwood",
                  user_email="clara.fanatic@example.com", xp=0, user_type="NORMAL", camera_permission=True)
         ]
     }

@@ -1,6 +1,6 @@
 from typing import List
 from database.database import Base
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, Boolean, LargeBinary, ForeignKey, Table
 from sqlalchemy.orm import relationship, Mapped
 
 user_campsite_favourites = Table(
@@ -16,11 +16,12 @@ user_campsite_favourites = Table(
 class User(Base):
     __tablename__ = "users"
 
-    username = Column(String(30), primary_key=True)
-    user_password = Column(String)
-    user_firstname = Column(String)
-    user_lastname = Column(String)
-    user_email = Column(String)
+    user_id = Column(Integer, primary_key=True, index=True)
+    username = Column(String(30), unique=True)
+    hashed_password = Column(LargeBinary)
+    user_firstname = Column(String, default="UNAVAILABLE")
+    user_lastname = Column(String, default="UNAVAILABLE")
+    user_email = Column(String, default="UNAVAILABLE")
     xp = Column(Integer, default=0)
     user_type = Column(String, default="NORMAL")
     camera_permission = Column(Boolean, default=False)

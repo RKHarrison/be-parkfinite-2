@@ -13,7 +13,8 @@ In your CLI run:
 In your CLI run:
 *       pip install -r requirements.txt
 
-### RUNNING THE APP:
+
+## RUNNING THE APP:
 * Run the app locally on http://127.0.0.1:8000:
 In your CLI run:
 *       uvicorn main:app
@@ -36,7 +37,8 @@ In your CLI:
 *      pytest -m db_utils
 * To run testing utilities test suite:
 *      use 'pytest -m test_utils' 
-### DEVELOPMENT AND PRODUCITON DATABASES:
+
+## DEVELOPMENT AND PRODUCITON DATABASES:
 --PLEASE ADD .ENV FILES TO GIT IGNORE TO KEEP THE DATABASES SECURE!!--
 --PLEASE ADD ANY LOCALLY STORED SQLITE DATABASE TO GITIGNORE TOO!--
 ### Setup .env.development and .env.production in be_parkfinite/api/:
@@ -50,4 +52,44 @@ In your CLI run:
 *      ENV=development python3 seed.py
 replace 'development' with 'production' to seed the hosted Postgres production db.
 
+## Seeding the Database
+### Overview
+When seeding the database with user data for testing or development, we use pre-hashed passwords to speed up the process. These passwords have been pre-hashed using our utility function and are stored directly in the seed data.
+### Generating a New Pre-Hashed Password
+If you need to generate a new pre-hashed password (for example, if you are setting up a new local repository or updating the seed data), follow these steps:
+
+1. Open a Python shell within the project's virtual environment.
+2. Run the following commands to generate the hash:
+
+    ```python
+    from api.utils.security_utils.password_utils import hash_password
+    print(hash_password('your_password_here')
+    ```
+
+3. Replace the old pre-hashed password in yourr .env.pre_hashed_user_password environment file or seed script with the newly generated one:
+
+    ```
+    PRE_HASHED_USER_PASSWORD=b'HASHEDPASSWORDHERE'
+    ```
+
+### Storing Pre-Hashed Passwords
+- **Environment File**: The pre-hashed password should be stored in an environment file named `.env.pre_hashed_user_passwords` (or another appropriately named `.env` file depending on the environment).
+- **Environment Variable**: Ensure that the pre-hashed password is assigned to the `PRE_HASHED_USER_PASSWORD` environment variable.
+- **Seeding Script**: The seeding script will automatically use the `PRE_HASHED_USER_PASSWORD` environment variable to assign the hashed password to the user records during the seeding process.
+
+### Example Usage in Seeding Script
+In your seeding script, the hashed password is fetched from the environment variable like so:
+
+```python
+from api.config.config import PRE_HASHED_USER_PASSWORD
+
+def seed_users(session, users):
+    for user in users:
+        user.hashed_password = PRE_HASHED_USER_PASSWORD
+        session.add(user)
+    session.commit()
+```
+### Additional Notes
+- Ensure that your `.env` files are properly git-ignored to avoid committing sensitive information to the repository.
+- Before pushing changes, verify that the environment and seed data are correctly set up and tested in your local environment.
 ### NOTE: BOTH DATABASES ARE CURRENTLY SEEDED FROM THE SAME DEVELOPMENT DATA FILE!

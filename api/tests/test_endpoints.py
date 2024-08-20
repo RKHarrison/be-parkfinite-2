@@ -5,11 +5,15 @@ from sqlalchemy.orm import sessionmaker
 import pytest
 from fastapi.testclient import TestClient
 
+from datetime import timedelta
+
 from database.database import Base
 from api.main import app, get_db
 from api.data.test_data import get_test_data
 from api.utils.seed_database import seed_database
 from api.utils.test_utils import is_valid_date
+from api.crud.auth_crud import create_access_token
+from api.models.user_models import User
 
 from os import environ
 environ['ENV'] = 'development'
@@ -36,6 +40,21 @@ app.dependency_overrides[get_db] = override_get_db
 
 @pytest.fixture(scope='function')
 def test_db():
+    Base.metadata.drop_all(test_engine)
+    Base.metadata.create_all(test_engine)
+    test_session = override_get_db()
+
+    try:
+        test_data = get_test_data()
+        seed_database(test_session, test_data)
+        yield test_session
+    finally:
+        Base.metadata.drop_all(test_engine)
+        test_session.close()
+
+
+@pytest.fixture(scope='class')
+def test_db_class_scope():
     Base.metadata.drop_all(test_engine)
     Base.metadata.create_all(test_engine)
     test_session = override_get_db()
@@ -389,7 +408,7 @@ class TestPostReviewByCampsiteId:
         error = response.json()
         print(error)
         assert "comment" in error['detail'][0]['loc']
-        assert error['detail'][0]['msg'] == 'String should have at most 350 characters'
+        assert error['detail'][0]['msg'] == 'Comment should have at most 350 characters'
 
     def test_422_field_missing_from_request_body(self, test_db):
         request_body = {
@@ -487,7 +506,7 @@ class TestPatchReviewsByReviewId:
         assert response.status_code == 422
         error = response.json()
         assert "comment" in error['detail'][0]['loc']
-        assert error['detail'][0]['msg'] == 'String should have at most 350 characters'
+        assert error['detail'][0]['msg'] == 'Comment should have at most 350 characters'
 
     def test_422_field_missing_from_request_body(self, test_db):
         request_body = {
@@ -519,7 +538,7 @@ class TestPatchReviewsByReviewId:
         assert error['detail'] == "404 - Campsite Not Found!"
 
 
-@pytest.mark.current
+@pytest.mark.main
 class TestDeleteReviewsByReviewId:
     def test_remove_review_by_review_id(self, test_db):
         response = client.delete("/reviews/4")
@@ -529,6 +548,139 @@ class TestDeleteReviewsByReviewId:
         response = client.delete("/reviews/987654321")
         assert response.status_code == 404
 
+
+@pytest.mark.main
+class TestPostUser:
+    def test_create_user(self, test_db_class_scope):
+        request_body = {"username": "Rich1234", "password": "secret123!"}
+        response = client.post("/auth", json=request_body)
+        assert response.status_code == 201
+        assert response.json()[
+            'message'] == "User created successfully, please log in to continue."
+
+        user = test_db_class_scope.query(User).filter(
+            User.username == "Rich1234").first()
+        assert user.username == "Rich1234"
+        assert isinstance(user.hashed_password, bytes)
+        assert isinstance(user.user_id, int)
+
+    def test_409_conflict_if_username_already_exists(self, test_db_class_scope):
+        request_body = {"username": "Rich1234", "password": "secret123!"}
+        response = client.post("/auth", json=request_body)
+
+        assert response.status_code == 409
+        assert response.json()['detail'] == 'Username already exists.'
+
+    def test_422_invalid_username_length(self, test_db):
+        request_body = {
+            "username": "THIS_USERNAME_IS_MORE_THAN_THIRTY_CHARACTERS", "password": "secret123"}
+        response = client.post("/auth", json=request_body)
+
+        assert response.status_code == 422
+        assert response.json()[
+            'detail'][0]['msg'] == "Username error, Username should be between 6 and 30 characters."
+
+    def test_422_invalid_username_characters(self, test_db):
+        request_body = {
+            "username": "HAS_INVALID_CHARS_&^%$£@!", "password": "secret123"}
+        response = client.post("/auth", json=request_body)
+
+        assert response.status_code == 422
+        assert response.json()[
+            'detail'][0]['msg'] == "Username error, Username must be alphanumeric and can include underscores."
+
+    def test_422_invalid_password_length(self, test_db):
+        request_body = {"username": "Rich1234", "password": "SHORT!"}
+        response = client.post("/auth", json=request_body)
+
+        assert response.status_code == 422
+        assert response.json()[
+            'detail'][0]['msg'] == "Password error, Password should be between 8 and 64 characters."
+
+    def test_422_invalid_password_requires_digit(self, test_db):
+        request_body = {"username": "Rich1234", "password": "NODIGITS"}
+        response = client.post("/auth", json=request_body)
+
+        assert response.status_code == 422
+        assert response.json()[
+            'detail'][0]['msg'] == "Password error, Password must include at least one digit."
+
+    def test_422_invalid_password_requires_special_character(self, test_db):
+        request_body = {"username": "Rich1234",
+                        "password": "NEEDS1SPECIALCHAR"}
+        response = client.post("/auth", json=request_body)
+
+        assert response.status_code == 422
+        assert response.json()[
+            'detail'][0]['msg'] == "Password error, Password must include at least one special character."
+
+
+@pytest.mark.main
+class TestAuthenticateUser:
+    def test_login_and_get_access_token(self, test_db):
+        request_body = {"username": "NatureExplorer", "password": "secret123!"}
+        response = client.post("auth/token", data=request_body)
+        assert response.status_code == 200
+
+        response_data = response.json()
+        assert 'access_token' in response_data, 'access token exists'
+        assert isinstance(
+            response_data['access_token'], str), "access token is a string"
+        assert response_data['token_type'] == 'bearer', 'token type is identified as a bearer token'
+
+    def test_401_unauthorized_wrong_username(self, test_db):
+        request_body = {"username": "DOESNTEXIST", "password": "secret123!"}
+        response = client.post("auth/token", data=request_body)
+        error = response.json()
+        assert response.status_code == 401
+        assert error['detail'] == "Incorrect username or password. Please try again.", 'does not aurthorise when no mathcing username in database'
+
+    def test_401_unauthorized_wrong_password(self, test_db):
+        request_body = {"username": "NatureExplorer",
+                        "password": "D03S_N0T_M4TCH"}
+        response = client.post("auth/token", data=request_body)
+        error = response.json()
+        assert response.status_code == 401
+        assert error['detail'] == "Incorrect username or password. Please try again.", 'does not aurthorise when no mathcing username in database'
+
+    def test_sql_injection(self, test_db):
+        request_body = {"username": "admin';--", "password": "any"}
+        response = client.post("/auth/token", data=request_body)
+        error = response.json()
+        assert response.status_code == 401
+        assert error['detail'] == "Incorrect username or password. Please try again.", 'does not aurthorise when using unauthorised characters to attempt sql injection'
+
+
+@pytest.mark.current
+class TestAuthenticatedHomeRouteAccess:
+    def test_home_route_access(self, test_db):
+        token_response = client.post(
+            "/auth/token", data={"username": "NatureExplorer", "password": "secret123!"})
+        token = token_response.json()['access_token']
+        headers = {"Authorization": f"Bearer {token}"}
+        response = client.get("/home", headers=headers)
+        assert response.status_code == 200
+
+        logged_in_user = response.json()
+        assert logged_in_user['User'] == {
+            'username': 'NatureExplorer', 'id': 1}
+
+    def test_401_home_route_access_without_token(self, test_db):
+        response = client.get("/home")
+        assert response.status_code == 401
+        assert 'detail' in response.json()
+        assert response.json()["detail"] == "Not authenticated"
+
+    def test_401_expired_token(self, test_db):
+        expired_token= create_access_token(username="NatureExplorer", user_id=1, expires_delta=timedelta(-1))
+        print(expired_token)
+
+        headers = {"Authorization": f"Bearer {expired_token}"}
+        response = client.get("/home", headers=headers)
+        print(response.json())
+        assert response.status_code == 401
+        error = response.json()
+        assert error['detail'] == 'Login has expired or is invalid. Please login again.'
 
 @pytest.mark.main
 class TestGetUsers:

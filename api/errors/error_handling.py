@@ -7,26 +7,25 @@ from os import getenv
 
 
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
+
     errors = exc.errors()
-    body = exc.body
+    print(errors)
+    formatted_errors = []
+
     for error in errors:
-        if error['loc'] == ('body', 'comment') and error['msg'] == 'String should have at most 350 characters':
-            return JSONResponse(
-                status_code=422,
-                content={"detail": [
-                    {"msg": "String should have at most 350 characters", "loc": error['loc'], "type": error['type']}]},
-            )
-        if error['loc'] == ('body', 'rating') and error['msg'] == 'Rating should be between 1 and 5':
-            return JSONResponse(
-                status_code=422,
-                content={"detail": [
-                    {"msg": "Rating should be between 1 and 5", "loc": error['loc'], "type": error['type']}]},
-            )
-    if getenv("ENV") == "development":
-        print("Validation errors:", errors)
+        error_location = error['loc'][-1].capitalize()
+        trimmed_default_error_message = ' '.join(error['msg'].split(' ')[1:])
+        user_readable_error_message = f"{error_location} {
+            trimmed_default_error_message}"
+        formatted_errors.append({
+            "loc": error['loc'],
+            "msg": user_readable_error_message,
+        })
+
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content=jsonable_encoder({"detail": errors, "body": body}),
+        content=jsonable_encoder(
+            {"detail": formatted_errors, "body": exc.body}),
     )
 
 
