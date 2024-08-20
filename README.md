@@ -63,10 +63,14 @@ If you need to generate a new pre-hashed password (for example, if you are setti
 
     ```python
     from api.utils.security_utils.password_utils import hash_password
-    print(hash_password('your_password_here').decode('utf-8'))
+    print(hash_password('your_password_here')
     ```
 
-3. Replace the old pre-hashed password in your environment file or seed script with the newly generated one.
+3. Replace the old pre-hashed password in yourr .env.pre_hashed_user_password environment file or seed script with the newly generated one:
+
+    ```
+    PRE_HASHED_USER_PASSWORD=b'HASHEDPASSWORDHERE'
+    ```
 
 ### Storing Pre-Hashed Passwords
 - **Environment File**: The pre-hashed password should be stored in an environment file named `.env.pre_hashed_user_passwords` (or another appropriately named `.env` file depending on the environment).
