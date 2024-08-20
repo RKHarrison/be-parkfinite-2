@@ -28,13 +28,6 @@ app.include_router(auth.router)
 
 user_dependency = Annotated[dict, Depends(get_current_user)]
 
-@app.exception_handler(JWTError)
-def jwt_exception_handler(request: Request, exc: JWTError):
-    return JSONResponse(
-        status_code=401,
-        content={"message": "Token has expired or is invalid. Please log in again."},
-    )
-
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(AttributeError, attribute_error_handler)
 app.add_exception_handler(HTTPException, http_exception_handler)
