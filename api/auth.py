@@ -2,6 +2,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from jose import jwt, JWTError
+
+from api.config.config import SECRET_KEY, ALGORITHM
 from database.database_utils.get_db import get_db
 
 from starlette import status
@@ -35,5 +38,18 @@ def post_user(db: db_dependency, create_user_request: CreateUserRequest):
 
 @router.post("/token", response_model=Token)
 def login_for_access_token(db: db_dependency, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-    print('authorsing attempt')
     return create_access_token_on_login(db=db, form_data=form_data)
+
+
+def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get('sub')
+        user_id: int = payload.get('id')
+        if not username or not user_id:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate user.')
+        return {'username': username, 'id': user_id}
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate user.')
