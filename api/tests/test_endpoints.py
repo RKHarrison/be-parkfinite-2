@@ -613,7 +613,7 @@ class TestPostUser:
             'detail'][0]['msg'] == "Password error, Password must include at least one special character."
 
 
-@pytest.mark.current
+@pytest.mark.main
 class TestAuthenticateUser:
     def test_login_and_get_access_token(self, test_db):
         request_body = {"username": "NatureExplorer", "password": "secret123!"}
@@ -647,6 +647,19 @@ class TestAuthenticateUser:
         error = response.json()
         assert response.status_code == 401
         assert error['detail'] == "Incorrect username or password. Please try again.", 'does not aurthorise when using unauthorised characters to attempt sql injection'
+
+@pytest.mark.current
+class TestAuthenticatedHomeRouteAccess:
+    def test_home_route_access(self, test_db):
+        token_response = client.post("/auth/token", data={"username": "NatureExplorer", "password": "secret123!"})
+        token = token_response.json()['access_token']
+        print(token)
+        headers = {"Authorization": f"Bearer {token}"}
+        repsonse = client.get("/home", headers=headers)
+        assert repsonse.status_code == 200
+
+        logged_in_user = repsonse.json()
+        assert logged_in_user['User'] == {'username': 'NatureExplorer', 'id': 1}
 
 
 @pytest.mark.main
