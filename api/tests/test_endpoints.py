@@ -624,6 +624,23 @@ class TestAuthenticateUser:
         assert isinstance(response_data['access_token'], str), "access token is a string"
         assert response_data['token_type'] == 'bearer', 'token type is identified as a bearer token'
 
+    def test_401_unauthorized_wrong_username(self, test_db):
+        request_body = {"username": "DOESNTEXIST", "password": "secret123!"}
+        response = client.post("auth/token", data=request_body)
+
+        error=response.json()
+        assert response.status_code == 401
+        assert error['detail'] == "Incorrect username or password. Please try again.", 'does not aurthorise when no mathcing username in database' 
+
+    def test_401_unauthorized_wrong_password(self, test_db):
+        request_body = {"username": "NatureExplorer", "password": "D03S_N0T_M4TCH"}
+        response = client.post("auth/token", data=request_body)
+
+        error=response.json()
+        assert response.status_code == 401
+        assert error['detail'] == "Incorrect username or password. Please try again.", 'does not aurthorise when no mathcing username in database' 
+
+
 
 @pytest.mark.main
 class TestGetUsers:
