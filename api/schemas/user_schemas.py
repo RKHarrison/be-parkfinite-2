@@ -37,7 +37,7 @@ class CreateUserRequest(UserBase):
 
 
 class User(UserBase):
-    hashed_password: str
+    hashed_password: bytes
     favourites: list[Campsite] = []
     user_firstname: str
     user_lastname: str
