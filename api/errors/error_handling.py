@@ -5,6 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy.exc import SQLAlchemyError, OperationalError, IntegrityError
 from os import getenv
 
+
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
 
     errors = exc.errors()
@@ -12,12 +13,10 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     formatted_errors = []
 
     for error in errors:
-        print('here')
         error_location = error['loc'][-1].capitalize()
         trimmed_default_error_message = ' '.join(error['msg'].split(' ')[1:])
-        user_readable_error_message = f"{error_location} {trimmed_default_error_message}"
-        print(user_readable_error_message)
-        
+        user_readable_error_message = f"{error_location} {
+            trimmed_default_error_message}"
         formatted_errors.append({
             "loc": error['loc'],
             "msg": user_readable_error_message,
@@ -25,7 +24,8 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content=jsonable_encoder({"detail": formatted_errors, "body": exc.body}),
+        content=jsonable_encoder(
+            {"detail": formatted_errors, "body": exc.body}),
     )
 
 
