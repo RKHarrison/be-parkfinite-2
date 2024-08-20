@@ -5,12 +5,14 @@ from sqlalchemy.orm import sessionmaker
 import pytest
 from fastapi.testclient import TestClient
 
+from datetime import timedelta
+
 from database.database import Base
 from api.main import app, get_db
 from api.data.test_data import get_test_data
 from api.utils.seed_database import seed_database
 from api.utils.test_utils import is_valid_date
-
+from api.crud.auth_crud import create_access_token
 from api.models.user_models import User
 
 from os import environ
@@ -648,18 +650,20 @@ class TestAuthenticateUser:
         assert response.status_code == 401
         assert error['detail'] == "Incorrect username or password. Please try again.", 'does not aurthorise when using unauthorised characters to attempt sql injection'
 
+
 @pytest.mark.current
 class TestAuthenticatedHomeRouteAccess:
     def test_home_route_access(self, test_db):
-        token_response = client.post("/auth/token", data={"username": "NatureExplorer", "password": "secret123!"})
+        token_response = client.post(
+            "/auth/token", data={"username": "NatureExplorer", "password": "secret123!"})
         token = token_response.json()['access_token']
-        print(token)
         headers = {"Authorization": f"Bearer {token}"}
-        repsonse = client.get("/home", headers=headers)
-        assert repsonse.status_code == 200
+        response = client.get("/home", headers=headers)
+        assert response.status_code == 200
 
-        logged_in_user = repsonse.json()
-        assert logged_in_user['User'] == {'username': 'NatureExplorer', 'id': 1}
+        logged_in_user = response.json()
+        assert logged_in_user['User'] == {
+            'username': 'NatureExplorer', 'id': 1}
 
     def test_401_home_route_access_without_token(self, test_db):
         response = client.get("/home")
@@ -667,6 +671,16 @@ class TestAuthenticatedHomeRouteAccess:
         assert 'detail' in response.json()
         assert response.json()["detail"] == "Not authenticated"
 
+    def test_401_expired_token(self, test_db):
+        expired_token= create_access_token(username="NatureExplorer", user_id=1, expires_delta=timedelta(-1))
+        print(expired_token)
+
+        headers = {"Authorization": f"Bearer {expired_token}"}
+        response = client.get("/home", headers=headers)
+        print(response.json())
+        assert response.status_code == 401
+        error = response.json()
+        assert error['detail'] == 'Login has expired or is invalid. Please login again.'
 
 @pytest.mark.main
 class TestGetUsers:
