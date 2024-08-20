@@ -5,7 +5,7 @@ from jose import jwt
 from api.config.config import SECRET_KEY, ALGORITHM
 from api.models.user_models import User
 from api.schemas.user_schemas import CreateUserRequest
-from api.utils.security_utils.password_utils import hash_password, verify_password
+from api.utils.security.password_utils import hash_password, verify_password
 
 
 def create_user(db, request: CreateUserRequest):
