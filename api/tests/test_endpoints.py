@@ -640,7 +640,12 @@ class TestAuthenticateUser:
         assert response.status_code == 401
         assert error['detail'] == "Incorrect username or password. Please try again.", 'does not aurthorise when no mathcing username in database' 
 
-
+    def test_sql_injection(self, test_db):
+        request_body = {"username": "admin';--", "password": "any"}
+        response = client.post("/auth/token", data=request_body)
+        error=response.json()
+        assert response.status_code == 401
+        assert error['detail'] == "Incorrect username or password. Please try again.", 'does not aurthorise when using unauthorised characters to attempt sql injection' 
 
 @pytest.mark.main
 class TestGetUsers:
