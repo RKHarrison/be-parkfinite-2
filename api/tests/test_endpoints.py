@@ -661,6 +661,12 @@ class TestAuthenticatedHomeRouteAccess:
         logged_in_user = repsonse.json()
         assert logged_in_user['User'] == {'username': 'NatureExplorer', 'id': 1}
 
+    def test_401_home_route_access_without_token(self, test_db):
+        response = client.get("/home")
+        assert response.status_code == 401
+        assert 'detail' in response.json()
+        assert response.json()["detail"] == "Not authenticated"
+
 
 @pytest.mark.main
 class TestGetUsers:
