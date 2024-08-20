@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 import ast
-from api.utils.security_utils.password_utils import hash_password
+from api.utils.security.password_utils import hash_password
 
 
 def convert_string_env_var_to_bytes(environnment_varaiable):

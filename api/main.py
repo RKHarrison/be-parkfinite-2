@@ -19,7 +19,7 @@ from api.schemas.user_schemas import User
 from api.errors.error_handling import (
     validation_exception_handler, attribute_error_handler,  http_exception_handler, sqlalchemy_exception_handler)
 import auth
-from auth import get_current_user
+from api.utils.security.authentication_utils import get_current_user
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI()
