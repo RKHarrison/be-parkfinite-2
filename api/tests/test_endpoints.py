@@ -612,6 +612,7 @@ class TestPostUser:
         assert response.json()[
             'detail'][0]['msg'] == "Password error, Password must include at least one special character."
 
+
 @pytest.mark.current
 class TestAuthenticateUser:
     def test_login_and_get_access_token(self, test_db):
@@ -621,31 +622,32 @@ class TestAuthenticateUser:
 
         response_data = response.json()
         assert 'access_token' in response_data, 'access token exists'
-        assert isinstance(response_data['access_token'], str), "access token is a string"
+        assert isinstance(
+            response_data['access_token'], str), "access token is a string"
         assert response_data['token_type'] == 'bearer', 'token type is identified as a bearer token'
 
     def test_401_unauthorized_wrong_username(self, test_db):
         request_body = {"username": "DOESNTEXIST", "password": "secret123!"}
         response = client.post("auth/token", data=request_body)
-
-        error=response.json()
+        error = response.json()
         assert response.status_code == 401
-        assert error['detail'] == "Incorrect username or password. Please try again.", 'does not aurthorise when no mathcing username in database' 
+        assert error['detail'] == "Incorrect username or password. Please try again.", 'does not aurthorise when no mathcing username in database'
 
     def test_401_unauthorized_wrong_password(self, test_db):
-        request_body = {"username": "NatureExplorer", "password": "D03S_N0T_M4TCH"}
+        request_body = {"username": "NatureExplorer",
+                        "password": "D03S_N0T_M4TCH"}
         response = client.post("auth/token", data=request_body)
-
-        error=response.json()
+        error = response.json()
         assert response.status_code == 401
-        assert error['detail'] == "Incorrect username or password. Please try again.", 'does not aurthorise when no mathcing username in database' 
+        assert error['detail'] == "Incorrect username or password. Please try again.", 'does not aurthorise when no mathcing username in database'
 
     def test_sql_injection(self, test_db):
         request_body = {"username": "admin';--", "password": "any"}
         response = client.post("/auth/token", data=request_body)
-        error=response.json()
+        error = response.json()
         assert response.status_code == 401
-        assert error['detail'] == "Incorrect username or password. Please try again.", 'does not aurthorise when using unauthorised characters to attempt sql injection' 
+        assert error['detail'] == "Incorrect username or password. Please try again.", 'does not aurthorise when using unauthorised characters to attempt sql injection'
+
 
 @pytest.mark.main
 class TestGetUsers:
