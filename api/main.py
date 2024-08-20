@@ -22,11 +22,12 @@ import auth
 from api.utils.security.authentication_utils import get_current_user
 
 Base.metadata.create_all(bind=engine)
+
+user_dependency = Depends(get_current_user)
 app = FastAPI()
+
 app.include_router(auth.router)
 
-
-user_dependency = Annotated[dict, Depends(get_current_user)]
 
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(AttributeError, attribute_error_handler)
@@ -38,15 +39,9 @@ app.add_exception_handler(SQLAlchemyError, sqlalchemy_exception_handler)
 def health_check():
     return {"Server": "Healthy and happy!"}
 
-@app.get("/home", status_code=status.HTTP_200_OK)
-def user(user: user_dependency, db: Session = Depends(get_db)):
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail=('Authentication Failed.'))
-    return {'User': user}
 
 @app.post("/campsites", status_code=201, response_model=CampsiteDetailed)
-def post_campsite(request: CampsiteCreateRequest, db: Session = Depends(get_db)):
+def post_campsite(request: CampsiteCreateRequest, db: Session = Depends(get_db), user=user_dependency):
     return create_campsite(db=db, request=request)
 
 
@@ -56,59 +51,59 @@ def get_campsites(skip: int = 0, limit: int = 250, db: Session = Depends(get_db)
 
 
 @app.get("/campsites/{campsite_id}", response_model=CampsiteDetailed)
-def get_campsite_by_campsite_id(campsite_id, db: Session = Depends(get_db)):
+def get_campsite_by_campsite_id(campsite_id, db: Session = Depends(get_db), user=user_dependency):
     return read_campsite_by_id(db, campsite_id)
 
 
 @app.post("/campsites/{campsite_id}/reviews", status_code=201, response_model=Review)
-def post_review_by_campsite_id(campsite_id, request: ReviewCreateRequest, db: Session = Depends(get_db)):
+def post_review_by_campsite_id(campsite_id, request: ReviewCreateRequest, db: Session = Depends(get_db), user=user_dependency):
     return create_review_by_campsite_id(db=db, campsite_id=campsite_id, request=request)
 
 
 @app.get("/campsites/{campsite_id}/reviews", response_model=list[Review])
-def get_reviews_by_campsite_id(campsite_id, db: Session = Depends(get_db)):
+def get_reviews_by_campsite_id(campsite_id, db: Session = Depends(get_db), user=user_dependency):
     return read_reviews_by_campsite_id(db, campsite_id)
 
 
 @app.patch("/campsites/{campsite_id}/reviews/{review_id}", status_code=200, response_model=Review)
-def patch_review_by_review_id(campsite_id, review_id, request: ReviewUpdateRequest, db: Session = Depends(get_db)):
+def patch_review_by_review_id(campsite_id, review_id, request: ReviewUpdateRequest, db: Session = Depends(get_db), user=user_dependency):
     return update_review_by_review_id(db=db, request=request, campsite_id=campsite_id, review_id=review_id)
 
 
 @app.delete("/reviews/{review_id}", status_code=204)
-def delete_review_by_review_id(review_id, db: Session = Depends(get_db)):
+def delete_review_by_review_id(review_id, db: Session = Depends(get_db), user=user_dependency):
     return remove_review_by_review_id(db=db, review_id=review_id)
 
 
 @app.get("/users", response_model=list[User])
-def get_users(db: Session = Depends(get_db)):
+def get_users(db: Session = Depends(get_db), user=user_dependency):
     return read_users(db)
 
 
 @app.get("/users/{username}", response_model=User)
-def get_user_by_id(username, db: Session = Depends(get_db)):
+def get_user_by_id(username, db: Session = Depends(get_db), user=user_dependency):
     return read_user_by_username(db, username)
 
 
 @app.patch("/users/{username}/{xp}", response_model=User)
-def patch_user_xp(username: str, xp: str, db: Session = Depends(get_db)):
+def patch_user_xp(username: str, xp: str, db: Session = Depends(get_db), user=user_dependency):
     return update_user_xp(db=db, username=username, xp=xp)
 
 
 @app.get("/users/{username}/favourites", response_model=list[Campsite])
-def get_user_favourite_campsites(username, db: Session = Depends(get_db)):
+def get_user_favourite_campsites(username, db: Session = Depends(get_db), user=user_dependency):
     favourites = read_user_campsite_favourites_by_username(db, username)
     print(favourites)
     return favourites
 
 
 @app.post("/users/{username}/favourites/{campsite_id}", status_code=201)
-def post_user_favourite_campsite(username, campsite_id, db: Session = Depends(get_db)):
+def post_user_favourite_campsite(username, campsite_id, db: Session = Depends(get_db), user=user_dependency):
     return create_user_favourite_campsite(db=db, username=username, campsite_id=campsite_id)
 
 
 @app.delete("/users/{username}/favourites/{campsite_id}", status_code=204)
-def delete_user_favourite_campsite(username, campsite_id, db: Session = Depends(get_db)):
+def delete_user_favourite_campsite(username, campsite_id, db: Session = Depends(get_db), user=user_dependency):
     return remove_user_favourite_campsite(db=db, username=username, campsite_id=campsite_id, )
 
 
