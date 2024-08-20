@@ -30,12 +30,10 @@ ALGORITHM = 'HS256'
 
 
 def create_access_token_on_login(db, form_data):
-    print(form_data)
     user = authenticate_user(form_data.username, form_data.password, db)
-    print(user)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail='Could not validate user.')
+                            detail='Incorrect username or password. Please try again.')
     token = create_access_token(
         user.username, user.user_id, timedelta(minutes=20))
 
