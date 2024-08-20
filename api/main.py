@@ -1,9 +1,13 @@
 import uvicorn
 from os import getenv
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.exceptions import RequestValidationError, HTTPException
+from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
+from starlette import status
+from jose import JWTError
+from typing import Annotated
 from database.database import engine, Base
 from database.database_utils.get_db import get_db
 from api.crud.campsite_crud import create_campsite, read_campsites, read_campsite_by_id
@@ -15,13 +19,21 @@ from api.schemas.user_schemas import User
 from api.errors.error_handling import (
     validation_exception_handler, attribute_error_handler,  http_exception_handler, sqlalchemy_exception_handler)
 import auth
+from auth import get_current_user
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI()
 app.include_router(auth.router)
 
 
+user_dependency = Annotated[dict, Depends(get_current_user)]
 
+@app.exception_handler(JWTError)
+def jwt_exception_handler(request: Request, exc: JWTError):
+    return JSONResponse(
+        status_code=401,
+        content={"message": "Token has expired or is invalid. Please log in again."},
+    )
 
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(AttributeError, attribute_error_handler)
@@ -29,10 +41,16 @@ app.add_exception_handler(HTTPException, http_exception_handler)
 app.add_exception_handler(SQLAlchemyError, sqlalchemy_exception_handler)
 
 
-@app.get("/")
+@app.get("/", status_code=status.HTTP_200_OK)
 def health_check():
     return {"Server": "Healthy and happy!"}
 
+@app.get("/home", status_code=status.HTTP_200_OK)
+def user(user: user_dependency, db: Session = Depends(get_db)):
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail=('Authentication Failed.'))
+    return {'User': user}
 
 @app.post("/campsites", status_code=201, response_model=CampsiteDetailed)
 def post_campsite(request: CampsiteCreateRequest, db: Session = Depends(get_db)):
