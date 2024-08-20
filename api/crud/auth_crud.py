@@ -2,6 +2,7 @@ from fastapi import HTTPException
 from datetime import timedelta, datetime, timezone
 from starlette import status
 from jose import jwt
+from api.config.config import SECRET_KEY, ALGORITHM
 from api.models.user_models import User
 from api.schemas.user_schemas import CreateUserRequest
 from api.utils.security_utils.password_utils import hash_password, verify_password
@@ -23,10 +24,6 @@ def create_user(db, request: CreateUserRequest):
     db.refresh(new_user)
 
     return {"username": new_user.username, "user_id": new_user.user_id}
-
-
-SECRET_KEY = 'cb886136c58b553b1dac8455cc10add008b390fdb936c807a29e65fb434322be'
-ALGORITHM = 'HS256'
 
 
 def create_access_token_on_login(db, form_data):

@@ -25,9 +25,11 @@ if environment == 'production':
 else:
     load_dotenv('.env.development')
 
-load_dotenv('.env.pre_hashed_user_password')
+load_dotenv('.env.passwords')
 
 # Set environment variables for use in prioject
 DATABASE_URL = os.getenv('DATABASE_URL')
+SECRET_KEY = os.getenv('SECRET_KEY')
+ALGORITHM = os.getenv('ALGORITHM')
 PRE_HASHED_USER_PASSWORD = convert_string_env_var_to_bytes(
     'PRE_HASHED_USER_PASSWORD')
