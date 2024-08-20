@@ -617,9 +617,12 @@ class TestAuthenticateUser:
     def test_login_and_get_access_token(self, test_db):
         request_body = {"username": "NatureExplorer", "password": "secret123!"}
         response = client.post("auth/token", data=request_body)
-
         assert response.status_code == 200
 
+        response_data = response.json()
+        assert 'access_token' in response_data, 'access token exists'
+        assert isinstance(response_data['access_token'], str), "access token is a string"
+        assert response_data['token_type'] == 'bearer', 'token type is identified as a bearer token'
 
 
 @pytest.mark.main
