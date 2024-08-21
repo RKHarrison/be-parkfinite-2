@@ -1,34 +1,31 @@
 import uvicorn
 from os import getenv
-from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.exceptions import RequestValidationError, HTTPException
-from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from starlette import status
-from jose import JWTError
-from typing import Annotated
 from database.database import engine, Base
 from database.database_utils.get_db import get_db
-from api.crud.campsite_crud import create_campsite, read_campsites, read_campsite_by_id
 from api.crud.reviews_crud import create_review_by_campsite_id, read_reviews_by_campsite_id, update_review_by_review_id, remove_review_by_review_id
 from api.crud.user_crud import read_users, read_user_by_username, update_user_xp, create_user_favourite_campsite, read_user_campsite_favourites_by_username, remove_user_favourite_campsite
-from api.schemas.campsite_schemas import CampsiteCreateRequest, Campsite, CampsiteDetailed
+from api.schemas.campsite_schemas import Campsite
 from api.schemas.review_schemas import ReviewCreateRequest, Review, ReviewUpdateRequest
 from api.schemas.user_schemas import User
 from api.errors.error_handling import (
     validation_exception_handler, attribute_error_handler,  http_exception_handler, sqlalchemy_exception_handler)
 from api.utils.security.authentication_utils import get_current_user
 
-import api.routes.auth as auth
+import api.routes.auth as auth_route
+import api.routes.campsites as campsites_route
 
 Base.metadata.create_all(bind=engine)
 
 user_dependency = Depends(get_current_user)
 app = FastAPI()
 
-app.include_router(auth.router)
-# app.include_router(campsites.router)
+app.include_router(auth_route.router)
+app.include_router(campsites_route.router)
 
 
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
@@ -42,19 +39,7 @@ def health_check():
     return {"Server": "Healthy and happy!"}
 
 
-@app.post("/campsites", status_code=201, response_model=CampsiteDetailed)
-def post_campsite(request: CampsiteCreateRequest, db: Session = Depends(get_db), user=user_dependency):
-    return create_campsite(db=db, request=request)
 
-
-@app.get("/campsites", response_model=list[Campsite])
-def get_campsites(skip: int = 0, limit: int = 250, db: Session = Depends(get_db)):
-    return read_campsites(db, skip=skip, limit=limit)
-
-
-@app.get("/campsites/{campsite_id}", response_model=CampsiteDetailed)
-def get_campsite_by_campsite_id(campsite_id, db: Session = Depends(get_db), user=user_dependency):
-    return read_campsite_by_id(db, campsite_id)
 
 
 @app.post("/campsites/{campsite_id}/reviews", status_code=201, response_model=Review)
