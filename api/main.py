@@ -12,7 +12,6 @@ from api.errors.error_handling import (
 
 import api.routes.auth as auth_route
 import api.routes.campsites as campsites_route
-import api.routes.reviews as reviews_route
 import api.routes.users as users_route
 
 Base.metadata.create_all(bind=engine)
@@ -21,7 +20,6 @@ app = FastAPI()
 
 app.include_router(auth_route.router)
 app.include_router(campsites_route.router)
-app.include_router(reviews_route.router)
 app.include_router(users_route.router)
 
 
