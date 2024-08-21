@@ -295,6 +295,8 @@ class TestPostCampsite:
             # CONTACT NUMBER SHOULD BE A STRING!!
             "contacts": [{"campsite_contact_name": "Bobby B", "campsite_contact_phone": 000000000000}]
         }
+
+        
         response = client.post("/campsites", json=request_body)
         assert response.status_code == 422
         assert "campsite_contact_phone" in response.json()['detail'][0]['loc']
@@ -673,11 +675,8 @@ class TestAuthenticatedHomeRouteAccess:
 
     def test_401_expired_token(self, test_db):
         expired_token= create_access_token(username="NatureExplorer", user_id=1, expires_delta=timedelta(-1))
-        print(expired_token)
-
         headers = {"Authorization": f"Bearer {expired_token}"}
         response = client.get("/home", headers=headers)
-        print(response.json())
         assert response.status_code == 401
         error = response.json()
         assert error['detail'] == 'Login has expired or is invalid. Please login again.'
