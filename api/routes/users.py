@@ -7,13 +7,14 @@ from api.crud.user_crud import read_users, read_user_by_username, update_user_xp
 from api.schemas.campsite_schemas import Campsite
 from api.schemas.user_schemas import User
 
-router = APIRouter(
-    prefix='/users',
-    tags=['users']
-)
-
 db_dependency = Annotated[Session, Depends(get_db)]
 user_dependency = Depends(get_current_user)
+
+router = APIRouter(
+    prefix='/users',
+    tags=['users'],
+    dependencies=[user_dependency]
+)
 
 
 @router.get("/", response_model=list[User])

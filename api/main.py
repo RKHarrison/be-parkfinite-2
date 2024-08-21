@@ -1,6 +1,6 @@
 import uvicorn
 from os import getenv
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError, HTTPException
 from sqlalchemy.exc import SQLAlchemyError
 from starlette import status
@@ -9,7 +9,6 @@ from database.database import engine, Base
 from database.database_utils.get_db import get_db
 from api.errors.error_handling import (
     validation_exception_handler, attribute_error_handler,  http_exception_handler, sqlalchemy_exception_handler)
-from api.utils.security.authentication_utils import get_current_user
 
 import api.routes.auth as auth_route
 import api.routes.campsites as campsites_route
@@ -18,7 +17,6 @@ import api.routes.users as users_route
 
 Base.metadata.create_all(bind=engine)
 
-user_dependency = Depends(get_current_user)
 app = FastAPI()
 
 app.include_router(auth_route.router)
