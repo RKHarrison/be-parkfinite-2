@@ -15,7 +15,8 @@ router = APIRouter(
     tags=['campsites']
 )
 
-router.include_router(reviews_route)
+router.include_router(reviews_route, prefix='/{campsite_id}/reviews')
+
 
 @router.post("/", status_code=201, response_model=CampsiteDetailed)
 def post_campsite(request: CampsiteCreateRequest, db: db_dependency, user=user_dependency):

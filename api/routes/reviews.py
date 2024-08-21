@@ -10,11 +10,8 @@ db_dependency = Annotated[Session, Depends(get_db)]
 user_dependency = Depends(get_current_user)
 
 router = APIRouter(
-    prefix='/{campsite_id}/reviews',
-    tags=['reviews'],
     dependencies=[user_dependency]
 )
-
 
 
 @router.post("/", status_code=201, response_model=Review)
@@ -35,4 +32,3 @@ def patch_review_by_review_id(campsite_id, review_id, request: ReviewUpdateReque
 @router.delete("/{review_id}", status_code=204)
 def delete_review_by_review_id(review_id, db: Session = Depends(get_db)):
     return remove_review_by_review_id(db=db, review_id=review_id)
-
