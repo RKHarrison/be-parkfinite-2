@@ -3,7 +3,7 @@ from typing import Annotated
 from jose import jwt, JWTError
 from starlette import status
 
-from api.auth import oauth2_bearer
+from api.routes.auth import oauth2_bearer
 from api.config.config import SECRET_KEY, ALGORITHM
 
 

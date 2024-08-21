@@ -18,8 +18,9 @@ from api.schemas.review_schemas import ReviewCreateRequest, Review, ReviewUpdate
 from api.schemas.user_schemas import User
 from api.errors.error_handling import (
     validation_exception_handler, attribute_error_handler,  http_exception_handler, sqlalchemy_exception_handler)
-import auth
 from api.utils.security.authentication_utils import get_current_user
+
+import api.routes.auth as auth
 
 Base.metadata.create_all(bind=engine)
 
@@ -27,6 +28,7 @@ user_dependency = Depends(get_current_user)
 app = FastAPI()
 
 app.include_router(auth.router)
+# app.include_router(campsites.router)
 
 
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
