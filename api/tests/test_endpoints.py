@@ -11,14 +11,27 @@ from database.database import Base
 from api.main import app, get_db
 from api.data.test_data import get_test_data
 from api.utils.seed_database import seed_database
-from api.utils.test_utils import is_valid_date
+from api.utils.test_utils import is_valid_date, get_test_user_token
 from api.crud.auth_crud import create_access_token
 from api.models.user_models import User
 
 from os import environ
 environ['ENV'] = 'development'
 
-client = TestClient(app)
+test_user_data = {"user_id": 1, "username": "NatureExplorer"}
+token = get_test_user_token(test_user_data)
+
+
+class AuthenticatedTestClient(TestClient):
+    def __init__(self, app, token):
+        super().__init__(app)
+        self.headers = {
+            **self.headers,
+            "Authorization": f"Bearer {token}"
+        }
+
+
+client = AuthenticatedTestClient(app, token)
 
 TEST_DB_URL = "sqlite:///"
 test_engine = create_engine(
@@ -296,7 +309,6 @@ class TestPostCampsite:
             "contacts": [{"campsite_contact_name": "Bobby B", "campsite_contact_phone": 000000000000}]
         }
 
-        
         response = client.post("/campsites", json=request_body)
         assert response.status_code == 422
         assert "campsite_contact_phone" in response.json()['detail'][0]['loc']
@@ -654,32 +666,37 @@ class TestAuthenticateUser:
 
 
 @pytest.mark.current
-class TestAuthenticatedHomeRouteAccess:
-    def test_home_route_access(self, test_db):
+class TestAuthenticatedEndpointAccess:
+    def test_authorized_endpoint_access(self, test_db):
         token_response = client.post(
             "/auth/token", data={"username": "NatureExplorer", "password": "secret123!"})
         token = token_response.json()['access_token']
         headers = {"Authorization": f"Bearer {token}"}
-        response = client.get("/home", headers=headers)
+        response = client.get("/campsites/1", headers=headers)
         assert response.status_code == 200
 
-        logged_in_user = response.json()
-        assert logged_in_user['User'] == {
-            'username': 'NatureExplorer', 'id': 1}
+        # logged_in_user = response.json()
+        # assert logged_in_user['User'] == {
+        #     'username': 'NatureExplorer', 'id': 1}
 
-    def test_401_home_route_access_without_token(self, test_db):
-        response = client.get("/home")
-        assert response.status_code == 401
-        assert 'detail' in response.json()
-        assert response.json()["detail"] == "Not authenticated"
-
-    def test_401_expired_token(self, test_db):
-        expired_token= create_access_token(username="NatureExplorer", user_id=1, expires_delta=timedelta(-1))
-        headers = {"Authorization": f"Bearer {expired_token}"}
-        response = client.get("/home", headers=headers)
+    def test_401_no_access_token(self, test_db):
+        expired_token = create_access_token(
+            username="NatureExplorer", user_id=1, expires_delta=timedelta(-1))
+        headers = {"Authorization": ""}
+        response = client.get("/campsites/1", headers=headers)
         assert response.status_code == 401
         error = response.json()
-        assert error['detail'] == 'Login has expired or is invalid. Please login again.'
+        assert error['detail'] == 'Not authenticated', "Access denied without token attached to header."
+
+    def test_401_expired_token(self, test_db):
+        expired_token = create_access_token(
+            username="NatureExplorer", user_id=1, expires_delta=timedelta(-1))
+        headers = {"Authorization": f"Bearer {expired_token}"}
+        response = client.get("/campsites/1", headers=headers)
+        assert response.status_code == 401
+        error = response.json()
+        assert error['detail'] == 'Login has expired or is invalid. Please login again.', "Access denied once token expired."
+
 
 @pytest.mark.main
 class TestGetUsers:
