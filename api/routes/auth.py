@@ -9,17 +9,13 @@ from api.schemas.user_schemas import CreateUserRequest
 from api.schemas.authentication_schemas import Token
 from api.crud.auth_crud import create_user, create_access_token_on_login
 
+db_dependency = Annotated[Session, Depends(get_db)]
 
 router = APIRouter(
     prefix='/auth',
     tags=['auth']
 )
-
-
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
-
-
-db_dependency = Annotated[Session, Depends(get_db)]
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)

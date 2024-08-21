@@ -555,11 +555,11 @@ class TestPatchReviewsByReviewId:
 @pytest.mark.main
 class TestDeleteReviewsByReviewId:
     def test_remove_review_by_review_id(self, test_db):
-        response = client.delete("/reviews/4")
+        response = client.delete("/campsites/1/reviews/4")
         assert response.status_code == 204
 
     def test_404_non_existent_review(self, test_db):
-        response = client.delete("/reviews/987654321")
+        response = client.delete("campsites/1/reviews/987654321")
         assert response.status_code == 404
 
 
