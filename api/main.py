@@ -7,10 +7,10 @@ from sqlalchemy.orm import Session
 from starlette import status
 from database.database import engine, Base
 from database.database_utils.get_db import get_db
-from api.crud.reviews_crud import create_review_by_campsite_id, read_reviews_by_campsite_id, update_review_by_review_id, remove_review_by_review_id
+from api.crud.reviews_crud import remove_review_by_review_id
 from api.crud.user_crud import read_users, read_user_by_username, update_user_xp, create_user_favourite_campsite, read_user_campsite_favourites_by_username, remove_user_favourite_campsite
 from api.schemas.campsite_schemas import Campsite
-from api.schemas.review_schemas import ReviewCreateRequest, Review, ReviewUpdateRequest
+
 from api.schemas.user_schemas import User
 from api.errors.error_handling import (
     validation_exception_handler, attribute_error_handler,  http_exception_handler, sqlalchemy_exception_handler)
@@ -37,24 +37,6 @@ app.add_exception_handler(SQLAlchemyError, sqlalchemy_exception_handler)
 @app.get("/", status_code=status.HTTP_200_OK)
 def health_check():
     return {"Server": "Healthy and happy!"}
-
-
-
-
-
-@app.post("/campsites/{campsite_id}/reviews", status_code=201, response_model=Review)
-def post_review_by_campsite_id(campsite_id, request: ReviewCreateRequest, db: Session = Depends(get_db), user=user_dependency):
-    return create_review_by_campsite_id(db=db, campsite_id=campsite_id, request=request)
-
-
-@app.get("/campsites/{campsite_id}/reviews", response_model=list[Review])
-def get_reviews_by_campsite_id(campsite_id, db: Session = Depends(get_db), user=user_dependency):
-    return read_reviews_by_campsite_id(db, campsite_id)
-
-
-@app.patch("/campsites/{campsite_id}/reviews/{review_id}", status_code=200, response_model=Review)
-def patch_review_by_review_id(campsite_id, review_id, request: ReviewUpdateRequest, db: Session = Depends(get_db), user=user_dependency):
-    return update_review_by_review_id(db=db, request=request, campsite_id=campsite_id, review_id=review_id)
 
 
 @app.delete("/reviews/{review_id}", status_code=204)
