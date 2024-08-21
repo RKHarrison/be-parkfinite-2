@@ -1,7 +1,7 @@
 # BE_PARKFINITE-2
 
 ### For potential employers and anyone wanting to explore the project:
-[A hosted version including swagger docs can be found here: ](https://parkfinite-2-api.onrender.com/docs)
+[A hosted version including swagger docs can be found here ](https://parkfinite-2-api.onrender.com/docs)
 
 ### PLEASE UPDATE THIS README TO REFLECT CURRENT STATE OF PROJECT BEFORE PUSHING TO GIT
 
