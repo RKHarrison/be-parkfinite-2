@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from api.models.review_models import Review
 from api.models.campsite_models import Campsite
-from api.models.user_models import User
+from api.models.user_models import User_Account
 from api.schemas.review_schemas import ReviewCreateRequest, ReviewUpdateRequest
 from api.utils.update_campsite_average_rating import update_campsite_average_rating
 
@@ -13,7 +13,7 @@ def create_review_by_campsite_id(db, campsite_id: int, request: ReviewCreateRequ
         raise HTTPException(
             status_code=404, detail="404 - Campsite Not Found!")
 
-    user = db.query(User).filter(User.username == request.username).first()
+    user = db.query(User_Account).filter(User_Account.username == request.username).first()
     if not user:
         raise HTTPException(status_code=404, detail="404 - User Not Found!")
 
