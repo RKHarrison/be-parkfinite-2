@@ -23,13 +23,13 @@ router = APIRouter(
 
 
 @router.get("/{user_id}", response_model=UserAccountDetails)
-def get_user_by_id(user_id, db: Session = Depends(get_db), user=user_dependency):
+def get_user_by_id(user_id: str, db: Session = Depends(get_db), user=user_dependency):
     return read_user_account_by_user_id(db, user_id)
 
 
-@router.patch("/{username}/{xp}", response_model=UserAccountDetails)
-def patch_user_xp(username: str, xp: str, db: Session = Depends(get_db), user=user_dependency):
-    return update_user_xp(db=db, username=username, xp=xp)
+@router.patch("/{user_id}/{xp}", response_model=UserAccountDetails)
+def patch_user_xp(user_id: str, xp: str, db: Session = Depends(get_db), user=user_dependency):
+    return update_user_xp(db=db, user_id=user_id, xp=xp)
 
 
 @router.get("/{username}/favourites", response_model=list[Campsite])

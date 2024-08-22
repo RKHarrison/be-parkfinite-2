@@ -15,10 +15,10 @@ def read_user_account_by_user_id(db, user_id):
     return user_account
 
 
-def update_user_xp(db, username, xp):
-    user = user = db.query(User_Account).filter(User_Account.username == username).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="404 - User Not Found!")
+def update_user_xp(db, user_id, xp):
+    user_account = db.query(User_Account).filter(User_Account.user_id == user_id).first()
+    if not user_account:
+        raise HTTPException(status_code=404, detail="404 - User Account Not Found!")
 
     try:
         if xp.startswith('-'):
@@ -28,10 +28,10 @@ def update_user_xp(db, username, xp):
     except ValueError:
         raise HTTPException(status_code=400, detail="400 - Invalid XP Value")
 
-    user.xp += xp_value
+    user_account.xp += xp_value
     db.commit()
-    db.refresh(user)
-    return user
+    db.refresh(user_account)
+    return user_account
 
 
 def create_user_favourite_campsite(db, username, campsite_id):
