@@ -457,7 +457,7 @@ class TestPostReviewByCampsiteId:
         assert error['detail'] == "404 - Campsite Not Found!"
 
 
-@pytest.mark.main
+@pytest.mark.current
 class TestGetReviewsByCampsiteId:
     def test_read_reviews_by_campsite_id(self, test_db):
         response = client.get("/campsites/1/reviews")
@@ -476,11 +476,11 @@ class TestGetReviewsByCampsiteId:
         assert reviews == []
 
 
-@pytest.mark.main
+@pytest.mark.current
 class TestPatchReviewsByReviewId:
     def test_patch_review_by_campsite_id(self, test_db):
         request_body = {
-            "username": "ForestFanatic",
+            "user_account_id": 3,
             "rating": 1,
             "comment": "Actually I changed my mind, its awful!"
         }
@@ -492,7 +492,7 @@ class TestPatchReviewsByReviewId:
 
     def test_patch_review_missing_optional_fields(self, test_db):
         request_body = {
-            "username": "ForestFanatic",
+            "user_account_id": 3,
             "comment": ""
         }
         response = client.patch("/campsites/2/reviews/4", json=request_body)
@@ -503,7 +503,7 @@ class TestPatchReviewsByReviewId:
 
     def test_422_rating_outside_range_1_5(self):
         request_body = {
-            "username": "ForestFanatic",
+            "user_account_id": 3,
             "rating": 0,
         }
         response = client.patch("/campsites/2/reviews/4", json=request_body)
@@ -512,7 +512,7 @@ class TestPatchReviewsByReviewId:
 
     def test_422_comment_outside_range_350_chars(self):
         request_body = {
-            "username": "ForestFanatic",
+            "user_account_id": 3,
             "comment": "Lorem ipsumor piscing elit. ABCDJSDPellentesque eget commodo orci. Integer varius nibh eu mattis porta. Duis tempus ex sed leo dapibus, sit amet facilisis est tincidunt. Aenean auctor, mauris nec laoreet convallis, urna ex egestas ante, id viverra eros libero at ipsum. Sed finibus libero quam, vel sollicitudin odio volutpat nec. Suspendisse potenti.+1"
         }
         response = client.patch("/campsites/2/reviews/4", json=request_body)
@@ -523,16 +523,16 @@ class TestPatchReviewsByReviewId:
 
     def test_422_field_missing_from_request_body(self, test_db):
         request_body = {
-            # NO USERNAME
+            # NO USER ACCOUNT ID
         }
         response = client.patch("/campsites/2/reviews/4", json=request_body)
         assert response.status_code == 422
         error = response.json()
-        assert "username" in error['detail'][0]['loc']
+        assert "user_account_id" in error['detail'][0]['loc']
 
     def test_404_review_not_found(self, test_db):
         request_body = {
-            "username": "ForestFanatic"
+            "user_account_id": 3,
         }
         response = client.patch(
             "/campsites/2/reviews/987654321", json=request_body)
@@ -542,7 +542,7 @@ class TestPatchReviewsByReviewId:
 
     def test_404_review_not_found(self, test_db):
         request_body = {
-            "username": "ForestFanatic"
+            "user_account_id": 3,
         }
         response = client.patch(
             "/campsites/987654321/reviews/4", json=request_body)
