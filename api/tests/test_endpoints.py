@@ -734,16 +734,16 @@ class TestGetUserAccountByUserId:
 
 @pytest.mark.current
 class TestUpdateUserXP:
-    def test_patch_user_xp(self, test_db):
-        response1 = client.patch('/users/NatureExplorer/25')
+    def test_patch_user_xp_by_user_id(self, test_db):
+        response1 = client.patch('/users/1/25')
         update1 = response1.json()
         assert response1.status_code == 200
 
-        response2 = client.patch('/users/NatureExplorer/100')
+        response2 = client.patch('/users/1/100')
         update2 = response2.json()
         assert response2.status_code == 200
 
-        response3 = client.patch('/users/NatureExplorer/-325')
+        response3 = client.patch('/users/1/-325')
         update3 = response3.json()
         assert response3.status_code == 200
 
@@ -752,16 +752,16 @@ class TestUpdateUserXP:
         assert update3['xp'] == 300
 
     def test_400_invalid_patch_request(self, test_db):
-        response = client.patch('/users/NatureExplorer/INVALID')
+        response = client.patch('/users/1/INVALID')
         error = response.json()
         assert response.status_code == 400
         assert error['detail'] == "400 - Invalid XP Value"
 
     def test_404_non_existing_user(self, test_db):
-        response = client.patch('/users/INVALID/50')
+        response = client.patch('/users/987654321/50')
         error = response.json()
         assert response.status_code == 404
-        assert error['detail'] == "404 - User Not Found!"
+        assert error['detail'] == "404 - User Account Not Found!"
 
 
 @pytest.mark.main
