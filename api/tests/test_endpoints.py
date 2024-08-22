@@ -381,13 +381,13 @@ class TestGetCampsiteById:
         assert response.json()["detail"] == "404 - Campsite Not Found!"
 
 
-@pytest.mark.main
+@pytest.mark.current
 class TestPostReviewByCampsiteId:
     def test_post_review(self, test_db):
         request_body = {
             "rating": 5,
             "campsite_id": 3,
-            "username": "NatureExplorer",
+            "user_account_id": 1,
             "comment": "Really great spot"
         }
         response = client.post("/campsites/1/reviews", json=request_body)
@@ -397,13 +397,13 @@ class TestPostReviewByCampsiteId:
         assert posted_review['review_id'] == 5
         assert posted_review['rating'] == 5
         assert posted_review['campsite_id'] == 1
-        assert posted_review['username'] == 'NatureExplorer'
+        assert posted_review['user_account_id'] == 1
         assert posted_review['comment'] == 'Really great spot'
 
     def test_422_rating_outside_range_1_5(self):
         request_body = {
             "rating": 6,
-            "username": "NatureExplorer",
+            "user_account_id": 1,
             "comment": "Really great spot"
         }
         response = client.post("/campsites/3/reviews", json=request_body)
@@ -413,7 +413,7 @@ class TestPostReviewByCampsiteId:
     def test_422_comment_outside_range_350_chars(self):
         request_body = {
             "rating": 5,
-            "username": "NatureExplorer",
+            "user_account_id": 1,
             "comment": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eget commodo orci. Integer varius nibh eu mattis porta. Duis tempus ex sed leo dapibus, sit amet facilisis est tincidunt. Aenean auctor, mauris nec laoreet convallis, urna ex egestas ante, id viverra eros libero at ipsum. Sed finibus libero quam, vel sollicitudin odio volutpat nec. Suspendisse potenti.+1"
         }
         response = client.post("/campsites/3/reviews", json=request_body)
@@ -425,7 +425,7 @@ class TestPostReviewByCampsiteId:
 
     def test_422_field_missing_from_request_body(self, test_db):
         request_body = {
-            "username": "NatureExplorer",
+            "user_account_id": 1,
             "comment": "Really great spot"
 
         }
@@ -434,10 +434,10 @@ class TestPostReviewByCampsiteId:
         error = response.json()
         assert "rating" in error['detail'][0]['loc']
 
-    def test_422_non_existent_username(self, test_db):
+    def test_422_non_existent_user_account_id(self, test_db):
         request_body = {
             "rating": 5,
-            "username": "NONEXISTENT",
+            "user_account_id": 987654321,
             "comment": "Really great spot"
         }
         response = client.post(f"/campsites/3/reviews", json=request_body)
@@ -448,7 +448,7 @@ class TestPostReviewByCampsiteId:
     def test_404_campsite_not_found(self, test_db):
         request_body = {
             "rating": 5,
-            "username": "NatureExplorer",
+            "user_account_id": 1,
             "comment": "Really great spot"
         }
         response = client.post("/campsites/999999/reviews", json=request_body)
