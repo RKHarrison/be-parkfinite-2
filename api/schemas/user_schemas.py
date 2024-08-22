@@ -41,7 +41,6 @@ class UserCredentials(UserCredentialsBase):
 
 
 class UserAccountBase(BaseModel):
-    username: str
     user_id: int
 
 class CreateUserAccountDetails(UserAccountBase):
@@ -69,7 +68,7 @@ class UserFavourites(UserAccountBase):
 
 # NEEDS RENAMING TO FavouriteUserCampsite
 class UserCampsiteBase(BaseModel):
-    username: str
+    user_id: str
     campsite_id: int
 
 
