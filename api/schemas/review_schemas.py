@@ -3,8 +3,8 @@ from typing import Annotated
 
 
 class ReviewBase(BaseModel):
+    user_account_id: int
     rating: Annotated[int, Field(ge=1, le=5)]
-    username: str
     comment: Annotated[str, Field(max_length=350)] | None = ""
 
     @field_validator('rating')
@@ -20,15 +20,24 @@ class ReviewBase(BaseModel):
         return comment
 
 
-class ReviewCreateRequest(ReviewBase):
+class ReviewPostRequest(ReviewBase):
     pass
 
-class ReviewUpdateRequest(ReviewBase):
+class ReviewPatchRequest(ReviewBase):
     rating: Annotated[int, Field(ge=1, le=5)] | None = None
+
+class ReviewResponse(ReviewBase):
+    review_id: int
+    campsite_id: int
+    user_account_id: int
+    rating: Annotated[int, Field(ge=1, le=5)]
+
 
 class Review(ReviewBase):
     review_id: int
     campsite_id: int
+    username: str
+    rating: Annotated[int, Field(ge=1, le=5)]
 
     class ConfigDict:
         from_attributes = True

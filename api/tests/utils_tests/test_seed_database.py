@@ -5,7 +5,7 @@ from api.models.campsite_models import Base, Campsite, CampsitePhoto, CampsiteCa
 from api.models.activity_models import Activity
 from api.models.facility_models import Facility
 from api.models.review_models import Review
-from api.models.user_models import User
+from api.models.user_models import User_Credentials
 from api.utils.seed_database import seed_database
 from api.data.utils_test_data import get_empty_seed_test_data, get_single_item_seed_test_data, get_single_model_seed_test_data, get_complex_seed_test_data, get_complete_seed_test_data
 
@@ -85,5 +85,5 @@ class TestSeedDatabaseUtil:
         assert len(all_facilities) == 3
         all_reviews = util_test_session.query(Review).all()
         assert len(all_reviews) == 3
-        all_users = util_test_session.query(User).all()
+        all_users = util_test_session.query(User_Credentials).all()
         assert len(all_users) == 3

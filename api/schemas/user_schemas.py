@@ -3,7 +3,7 @@ from api.schemas.campsite_schemas import Campsite
 import re
 
 
-class UserBase(BaseModel):
+class UserCredentialsBase(BaseModel):
     username: str
 
     class ConfigDict:
@@ -20,7 +20,7 @@ class UserBase(BaseModel):
         return username
 
 
-class CreateUserRequest(UserBase):
+class CreateUserCredentialsRequest(UserCredentialsBase):
     password: str
 
     @field_validator('password')
@@ -36,8 +36,22 @@ class CreateUserRequest(UserBase):
         return password
 
 
-class User(UserBase):
-    favourites: list[Campsite] = []
+class UserCredentials(UserCredentialsBase):
+    user_id: int
+
+
+class UserAccountBase(BaseModel):
+    user_id: int
+
+class CreateUserAccountDetails(UserAccountBase):
+    user_firstname: str
+    user_lastname: str
+    user_email: str
+    camera_permission: bool
+
+
+class UserAccountDetails(UserAccountBase):
+    user_account_id: int
     user_firstname: str
     user_lastname: str
     user_email: str
@@ -45,10 +59,17 @@ class User(UserBase):
     user_type: str
     camera_permission: bool
 
+class UserFavourites(UserAccountBase):
+    favourites: list[Campsite] = []
+
+
+
+
+
 
 # NEEDS RENAMING TO FavouriteUserCampsite
 class UserCampsiteBase(BaseModel):
-    username: str
+    user_id: str
     campsite_id: int
 
 

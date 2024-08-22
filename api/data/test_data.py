@@ -3,7 +3,7 @@ from api.models.campsite_models import Campsite, CampsitePhoto, CampsiteContact,
 from api.models.activity_models import Activity
 from api.models.facility_models import Facility
 from api.models.review_models import Review
-from api.models.user_models import User
+from api.models.user_models import User_Credentials, User_Account
 
 
 def get_test_data():
@@ -34,11 +34,11 @@ def get_test_data():
         ],
         'campsite': [
             Campsite(campsite_name="CAMPSITE A", category_id=1, campsite_longitude=-1.54322, campsite_latitude=53.45645, parking_cost=None, facilities_cost=None,
-                     description="CAMPSITE A offers a serene setting amidst lush greenery, ideal for a peaceful retreat.", date_added=datetime.now().isoformat(), added_by="Admin", approved=True, opening_month="March", closing_month="November"),
+                     description="CAMPSITE A offers a serene setting amidst lush greenery, ideal for a peaceful retreat.", date_added=datetime.now().isoformat(), user_account_id=1, approved=True, opening_month="March", closing_month="November"),
             Campsite(campsite_name="CAMPSITE B", category_id=2, campsite_longitude=-1.87654, campsite_latitude=53.54321, parking_cost=14, facilities_cost=27,
-                     description="CAMPSITE B provides stunning views and vibrant sunsets nestled on gentle slopes.", date_added=datetime.now().isoformat(), added_by="Admin", approved=False, opening_month=None, closing_month=None),
+                     description="CAMPSITE B provides stunning views and vibrant sunsets nestled on gentle slopes.", date_added=datetime.now().isoformat(), user_account_id=1, approved=False, opening_month=None, closing_month=None),
             Campsite(campsite_name="CAMPSITE C", category_id=3, campsite_longitude=-1.81234, campsite_latitude=53.123456, parking_cost=13, facilities_cost=26,
-                     description="CAMPSITE C offers prime access to river adventures in a picturesque setting.", date_added=datetime.now().isoformat(), added_by="Admin", approved=True)
+                     description="CAMPSITE C offers prime access to river adventures in a picturesque setting.", date_added=datetime.now().isoformat(), user_account_id=1, approved=True)
         ],
         'campsite_photo': [
             CampsitePhoto(
@@ -53,23 +53,28 @@ def get_test_data():
                             campsite_contact_phone="321-654-9870", campsite_contact_email="abc@xyz.com")
         ],
         'review': [
-            Review(rating=5, campsite_id=1, username="NatureExplorer",
+            Review(rating=5, campsite_id=1, user_account_id=1,
                    comment="Stunning location, completely serene. Can't wait to come back."),
-            Review(rating=5, campsite_id=1, username="PeakHiker92",
+            Review(rating=5, campsite_id=1, user_account_id=2,
                    comment="As a hiker, this place is a dream. Trails for all levels are accessible."),
-            Review(rating=5, campsite_id=1, username="ForestFanatic"),
-            Review(rating=2, campsite_id=2, username="ForestFanatic",
+            Review(rating=5, campsite_id=1, user_account_id=3),
+            Review(rating=2, campsite_id=2, user_account_id=3,
                    comment="Its ok I guess")
         ],
-        'user': [
-            User(username="NatureExplorer", user_firstname="Alice", user_lastname="Wanderlust",
-                 user_email="alice@example.com", xp=500, user_type="NORMAL", camera_permission=True),
-            User(username="PeakHiker92", user_firstname="Bob", user_lastname="Hills",
-                 user_email="bob92@example.com", xp=0, user_type="NORMAL", camera_permission=True),
-            User(username="ForestFanatic", user_firstname="Clara",
-                 user_lastname="Greenwood", user_email="clara.fanatic@example.com")
+        'users_credentials': [
+            User_Credentials(username="NatureExplorer"),
+            User_Credentials(username="PeakHiker92"),
+            User_Credentials(username="ForestFanatic")
+        ],
+        'user_accounts': [
+            User_Account(user_id=1, user_firstname="Alice", user_lastname="Wanderlust",
+                         user_email="alice@example.com", xp=500, user_type="NORMAL", camera_permission=True),
+            User_Account(user_id=2, user_firstname="Bob", user_lastname="Hills",
+                         user_email="bob92@example.com", xp=0, user_type="NORMAL", camera_permission=True),
+            User_Account(user_id=3, user_firstname="Clara",
+                         user_lastname="Greenwood", user_email="clara.fanatic@example.com")
         ],
         'user_campsite_favourites': [
-            ("NatureExplorer", [1, 3])
+            [1,3],[1,1]
         ]
     }

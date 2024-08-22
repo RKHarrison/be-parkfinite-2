@@ -13,7 +13,8 @@ from api.data.test_data import get_test_data
 from api.utils.seed_database import seed_database
 from api.utils.test_utils import is_valid_date, get_test_user_token
 from api.crud.auth_crud import create_access_token
-from api.models.user_models import User
+from api.models.user_models import User_Credentials
+from api.schemas.campsite_schemas import Campsite
 
 from os import environ
 environ['ENV'] = 'development'
@@ -85,13 +86,13 @@ def test_db_class_scope():
 class TestPostCampsite:
     def test_basic_campsite_with_category(self, test_db):
         request_body = {
+            "user_account_id": 1,
             "campsite_name": "TEST NAME",
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
             "photos": [],
             "parking_cost": 10.30,
             "facilities_cost": 2.50,
-            "added_by": "PeakHiker92",
             "category_id": 3,
             "opening_month": "April",
             "closing_month": "May"
@@ -107,7 +108,7 @@ class TestPostCampsite:
         assert posted_campsite["campsite_latitude"] == 4.56
         assert posted_campsite['parking_cost'] == 10.30
         assert posted_campsite['facilities_cost'] == 2.50
-        assert posted_campsite['added_by'] == "PeakHiker92"
+        assert posted_campsite['user_account_id'] == 1
         assert posted_campsite['category']['category_id'] == 3
         assert posted_campsite['category']['category_name'] == "Campsite"
         assert posted_campsite['category']['category_img_url'] == "https://example.com/category4.jpg"
@@ -123,7 +124,7 @@ class TestPostCampsite:
     def test_campsite_with_photo(self, test_db):
         request_body = {
             "campsite_name": "TEST NAME",
-            "added_by": "PeakHiker92",
+            "user_account_id": 1,
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
             "category_id": 3,
@@ -143,7 +144,7 @@ class TestPostCampsite:
     def test_campsite_multiple_photos(self, test_db):
         request_body = {
             "campsite_name": "TEST NAME",
-            "added_by": "PeakHiker92",
+            "user_account_id": 1,
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
             "category_id": 3,
@@ -179,12 +180,12 @@ class TestPostCampsite:
     def test_campsite_with_contact(self, test_db):
         request_body = {
             "campsite_name": "TEST NAME",
+            "user_account_id": 1,
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
             "photos": [],
             "parking_cost": 10.30,
             "facilities_cost": 2.50,
-            "added_by": "PeakHiker92",
             "category_id": 3,
             "opening_month": "April",
             "closing_month": "May",
@@ -206,12 +207,12 @@ class TestPostCampsite:
     def test_campsite_multiple_contacts(self, test_db):
         request_body = {
             "campsite_name": "TEST NAME",
+            "user_account_id": 1,
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
             "photos": [],
             "parking_cost": 10.30,
             "facilities_cost": 2.50,
-            "added_by": "PeakHiker92",
             "category_id": 3,
             "opening_month": "April",
             "closing_month": "May",
@@ -237,10 +238,10 @@ class TestPostCampsite:
     def test_404_category_not_found(self, test_db):
         request_body = {
             "category_id": 987654321,
+            "user_account_id": 1,
             "campsite_name": "TEST NAME",
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
-            "added_by": "PeakHiker92",
             "photos": []
         }
         response = client.post("/campsites", json=request_body)
@@ -250,9 +251,9 @@ class TestPostCampsite:
 
     def test_422_field_missing_from_request_body(self, test_db):
         request_body = {
+            "user_account_id": 1,
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
-            "added_by": "PeakHiker92",
             "category_id": 3,
         }
         response = client.post("/campsites", json=request_body)
@@ -261,10 +262,10 @@ class TestPostCampsite:
 
     def test_422_invalid_data_in_basic_campsite_request_body(self, test_db):
         request_body = {
+            "user_account_id": 1,
             "campsite_name": "TEST NAME",
             "campsite_longitude": "INVALID",
             "campsite_latitude": 4.56,
-            "added_by": "PeakHiker92",
             "category_id": 3
         }
         response = client.post("/campsites", json=request_body)
@@ -273,10 +274,10 @@ class TestPostCampsite:
 
     def test_422_invalid_PHOTO_info(self, test_db):
         request_body = {
+            "user_account_id": 1,
             "campsite_name": "TEST NAME",
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
-            "added_by": "PeakHiker92",
             "category_id": 3,
             # PHOTO URL SHOULD BE A STRING!!
             "photos": [{"campsite_photo_url": 00000000}]
@@ -287,10 +288,10 @@ class TestPostCampsite:
 
     def test_invalid_PHOTOS_data_structure(self, test_db):
         request_body = {
+            "user_account_id": 1,
             "campsite_name": "TEST NAME",
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
-            "added_by": "PeakHiker92",
             "category_id": 3,
             "photos": "SHOULD BE A LIST"
         }
@@ -300,10 +301,10 @@ class TestPostCampsite:
 
     def test_422_invalid_CONTACT_info(self, test_db):
         request_body = {
+            "user_account_id": 1,
             "campsite_name": "TEST NAME",
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
-            "added_by": "PeakHiker92",
             "category_id": 3,
             # CONTACT NUMBER SHOULD BE A STRING!!
             "contacts": [{"campsite_contact_name": "Bobby B", "campsite_contact_phone": 000000000000}]
@@ -315,10 +316,10 @@ class TestPostCampsite:
 
     def test_invalid_CONTACTS_data_structure(self, test_db):
         request_body = {
+            "user_account_id": 1,
             "campsite_name": "TEST NAME",
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
-            "added_by": "PeakHiker92",
             "category_id": 3,
             "contacts": "SHOULD BE A LIST"
         }
@@ -338,8 +339,7 @@ class TestGetCampsites:
         for campsite in campsites:
             assert isinstance(campsite['campsite_name'], str)
             assert isinstance(campsite['campsite_id'], int)
-            assert is_valid_date(campsite['date_added'])
-            assert isinstance(campsite['added_by'], str)
+            assert isinstance(campsite['user_account_id'], int)
             assert isinstance(campsite['campsite_longitude'], float)
             assert isinstance(campsite['campsite_latitude'], float)
             assert isinstance(campsite['category']['category_name'], str)
@@ -387,24 +387,23 @@ class TestPostReviewByCampsiteId:
         request_body = {
             "rating": 5,
             "campsite_id": 3,
-            "username": "NatureExplorer",
+            "user_account_id": 1,
             "comment": "Really great spot"
         }
         response = client.post("/campsites/1/reviews", json=request_body)
-        print(response.json())
         assert response.status_code == 201
 
         posted_review = response.json()
         assert posted_review['review_id'] == 5
         assert posted_review['rating'] == 5
         assert posted_review['campsite_id'] == 1
-        assert posted_review['username'] == 'NatureExplorer'
+        assert posted_review['user_account_id'] == 1
         assert posted_review['comment'] == 'Really great spot'
 
     def test_422_rating_outside_range_1_5(self):
         request_body = {
             "rating": 6,
-            "username": "NatureExplorer",
+            "user_account_id": 1,
             "comment": "Really great spot"
         }
         response = client.post("/campsites/3/reviews", json=request_body)
@@ -414,7 +413,7 @@ class TestPostReviewByCampsiteId:
     def test_422_comment_outside_range_350_chars(self):
         request_body = {
             "rating": 5,
-            "username": "NatureExplorer",
+            "user_account_id": 1,
             "comment": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eget commodo orci. Integer varius nibh eu mattis porta. Duis tempus ex sed leo dapibus, sit amet facilisis est tincidunt. Aenean auctor, mauris nec laoreet convallis, urna ex egestas ante, id viverra eros libero at ipsum. Sed finibus libero quam, vel sollicitudin odio volutpat nec. Suspendisse potenti.+1"
         }
         response = client.post("/campsites/3/reviews", json=request_body)
@@ -426,7 +425,7 @@ class TestPostReviewByCampsiteId:
 
     def test_422_field_missing_from_request_body(self, test_db):
         request_body = {
-            "username": "NatureExplorer",
+            "user_account_id": 1,
             "comment": "Really great spot"
 
         }
@@ -435,10 +434,10 @@ class TestPostReviewByCampsiteId:
         error = response.json()
         assert "rating" in error['detail'][0]['loc']
 
-    def test_422_non_existent_username(self, test_db):
+    def test_422_non_existent_user_account_id(self, test_db):
         request_body = {
             "rating": 5,
-            "username": "NONEXISTENT",
+            "user_account_id": 987654321,
             "comment": "Really great spot"
         }
         response = client.post(f"/campsites/3/reviews", json=request_body)
@@ -449,7 +448,7 @@ class TestPostReviewByCampsiteId:
     def test_404_campsite_not_found(self, test_db):
         request_body = {
             "rating": 5,
-            "username": "NatureExplorer",
+            "user_account_id": 1,
             "comment": "Really great spot"
         }
         response = client.post("/campsites/999999/reviews", json=request_body)
@@ -463,8 +462,12 @@ class TestGetReviewsByCampsiteId:
     def test_read_reviews_by_campsite_id(self, test_db):
         response = client.get("/campsites/1/reviews")
         assert response.status_code == 200
+
         reviews = response.json()
         assert len(reviews) == 3
+        assert reviews[0]['username'] == 'NatureExplorer'
+        assert reviews[2] == {'rating': 5, 'user_account_id': 3, 'comment': None,
+                              'review_id': 3, 'campsite_id': 1, 'username': 'ForestFanatic'}
 
     def test_read_reviews_by_different_campsite_id(self, test_db):
         response = client.get("/campsites/2/reviews")
@@ -481,7 +484,7 @@ class TestGetReviewsByCampsiteId:
 class TestPatchReviewsByReviewId:
     def test_patch_review_by_campsite_id(self, test_db):
         request_body = {
-            "username": "ForestFanatic",
+            "user_account_id": 3,
             "rating": 1,
             "comment": "Actually I changed my mind, its awful!"
         }
@@ -493,7 +496,7 @@ class TestPatchReviewsByReviewId:
 
     def test_patch_review_missing_optional_fields(self, test_db):
         request_body = {
-            "username": "ForestFanatic",
+            "user_account_id": 3,
             "comment": ""
         }
         response = client.patch("/campsites/2/reviews/4", json=request_body)
@@ -504,7 +507,7 @@ class TestPatchReviewsByReviewId:
 
     def test_422_rating_outside_range_1_5(self):
         request_body = {
-            "username": "ForestFanatic",
+            "user_account_id": 3,
             "rating": 0,
         }
         response = client.patch("/campsites/2/reviews/4", json=request_body)
@@ -513,7 +516,7 @@ class TestPatchReviewsByReviewId:
 
     def test_422_comment_outside_range_350_chars(self):
         request_body = {
-            "username": "ForestFanatic",
+            "user_account_id": 3,
             "comment": "Lorem ipsumor piscing elit. ABCDJSDPellentesque eget commodo orci. Integer varius nibh eu mattis porta. Duis tempus ex sed leo dapibus, sit amet facilisis est tincidunt. Aenean auctor, mauris nec laoreet convallis, urna ex egestas ante, id viverra eros libero at ipsum. Sed finibus libero quam, vel sollicitudin odio volutpat nec. Suspendisse potenti.+1"
         }
         response = client.patch("/campsites/2/reviews/4", json=request_body)
@@ -524,16 +527,16 @@ class TestPatchReviewsByReviewId:
 
     def test_422_field_missing_from_request_body(self, test_db):
         request_body = {
-            # NO USERNAME
+            # NO USER ACCOUNT ID
         }
         response = client.patch("/campsites/2/reviews/4", json=request_body)
         assert response.status_code == 422
         error = response.json()
-        assert "username" in error['detail'][0]['loc']
+        assert "user_account_id" in error['detail'][0]['loc']
 
     def test_404_review_not_found(self, test_db):
         request_body = {
-            "username": "ForestFanatic"
+            "user_account_id": 3,
         }
         response = client.patch(
             "/campsites/2/reviews/987654321", json=request_body)
@@ -543,7 +546,7 @@ class TestPatchReviewsByReviewId:
 
     def test_404_review_not_found(self, test_db):
         request_body = {
-            "username": "ForestFanatic"
+            "user_account_id": 3,
         }
         response = client.patch(
             "/campsites/987654321/reviews/4", json=request_body)
@@ -572,8 +575,8 @@ class TestPostUser:
         assert response.json()[
             'message'] == "User created successfully, please log in to continue."
 
-        user = test_db_class_scope.query(User).filter(
-            User.username == "Rich1234").first()
+        user = test_db_class_scope.query(User_Credentials).filter(
+            User_Credentials.username == "Rich1234").first()
         assert user.username == "Rich1234"
         assert isinstance(user.hashed_password, bytes)
         assert isinstance(user.user_id, int)
@@ -665,7 +668,7 @@ class TestAuthenticateUser:
         assert error['detail'] == "Incorrect username or password. Please try again.", 'does not aurthorise when using unauthorised characters to attempt sql injection'
 
 
-@pytest.mark.current
+@pytest.mark.main
 class TestAuthenticatedEndpointAccess:
     def test_authorized_endpoint_access(self, test_db):
         token_response = client.post(
@@ -675,9 +678,8 @@ class TestAuthenticatedEndpointAccess:
         response = client.get("/campsites/1", headers=headers)
         assert response.status_code == 200
 
-        # logged_in_user = response.json()
-        # assert logged_in_user['User'] == {
-        #     'username': 'NatureExplorer', 'id': 1}
+        campsite = response.json()
+        assert campsite['campsite_id'] == 1
 
     def test_401_no_access_token(self, test_db):
         expired_token = create_access_token(
@@ -698,42 +700,51 @@ class TestAuthenticatedEndpointAccess:
         assert error['detail'] == 'Login has expired or is invalid. Please login again.', "Access denied once token expired."
 
 
-@pytest.mark.main
-class TestGetUsers:
-    def test_read_users(self, test_db):
-        response = client.get("/users")
-        assert response.status_code == 200
-        users = response.json()
-        assert len(users) == 3
+# DISABLED PENDING AMDMINISTRATION LEVEL RESTRICTION
+# @pytest.mark.current
+# class TestGetUsers:
+#     def test_read_users(self, test_db):
+#         response = client.get("/users")
+#         assert response.status_code == 200
+#         users = response.json()
+#         assert len(users) == 3
 
 
 @pytest.mark.main
-class TestGetUserByUsername:
-    def test_read_user_by_username(self, test_db):
-        response = client.get('/users/NatureExplorer')
+class TestGetUserAccountByUserId:
+    def test_read_user_account_by_user_id(self, test_db):
+        response = client.get('/users/1')
         assert response.status_code == 200
-        user = response.json()
-        assert user["username"] == "NatureExplorer"
+        
+        user_account = response.json()
+        assert isinstance(user_account["user_account_id"], int)
+        assert isinstance(user_account["user_id"], int)
+        assert isinstance(user_account["user_firstname"], str)
+        assert isinstance(user_account["user_lastname"], str)
+        assert isinstance(user_account["user_email"], str)
+        assert isinstance(user_account["xp"], int)
+        assert isinstance(user_account["user_type"], str)
+        assert isinstance(user_account["camera_permission"], bool)
 
     def test_404_non_existing_username(self, test_db):
         response = client.get('/users/NONEXISTING')
         assert response.status_code == 404
         error = response.json()
-        assert error["detail"] == "404 - User Not Found!"
+        assert error["detail"] == "404 - User Account Not Found!"
 
 
 @pytest.mark.main
 class TestUpdateUserXP:
-    def test_patch_user_xp(self, test_db):
-        response1 = client.patch('/users/NatureExplorer/25')
+    def test_patch_user_xp_by_user_id(self, test_db):
+        response1 = client.patch('/users/1/25')
         update1 = response1.json()
         assert response1.status_code == 200
 
-        response2 = client.patch('/users/NatureExplorer/100')
+        response2 = client.patch('/users/1/100')
         update2 = response2.json()
         assert response2.status_code == 200
 
-        response3 = client.patch('/users/NatureExplorer/-325')
+        response3 = client.patch('/users/1/-325')
         update3 = response3.json()
         assert response3.status_code == 200
 
@@ -742,36 +753,36 @@ class TestUpdateUserXP:
         assert update3['xp'] == 300
 
     def test_400_invalid_patch_request(self, test_db):
-        response = client.patch('/users/NatureExplorer/INVALID')
+        response = client.patch('/users/1/INVALID')
         error = response.json()
         assert response.status_code == 400
         assert error['detail'] == "400 - Invalid XP Value"
 
     def test_404_non_existing_user(self, test_db):
-        response = client.patch('/users/INVALID/50')
+        response = client.patch('/users/987654321/50')
         error = response.json()
         assert response.status_code == 404
-        assert error['detail'] == "404 - User Not Found!"
+        assert error['detail'] == "404 - User Account Not Found!"
 
 
 @pytest.mark.main
 class TestPostUserFavouriteCampsite:
-    def test_create_user_favourite_campsite(self, test_db):
-        response = client.post("/users/PeakHiker92/favourites/2")
+    def test_create_user_favourite_campsite(self, test_db_class_scope):
+        response = client.post("/users/2/favourites/2")
         assert response.status_code == 201
 
-    def test_409_user_favourite_campsite_already_exists(self, test_db):
-        response = client.post("/users/NatureExplorer/favourites/1")
+    def test_409_user_favourite_campsite_already_exists(self, test_db_class_scope):
+        response = client.post("/users/2/favourites/2")
         assert response.status_code == 409
 
     def test_404_user_not_found(self, test_db):
         response = client.post("/users/NONEXISTENT/favourites/1")
         assert response.status_code == 404
         error = response.json()
-        assert error['detail'] == '404 - User Not Found!'
+        assert error['detail'] == '404 - User Account Not Found!'
 
     def test_404_campsite_not_found(self, test_db):
-        response = client.post("/users/PeakHiker92/favourites/987654321")
+        response = client.post("/users/2/favourites/987654321")
         assert response.status_code == 404
         error = response.json()
         assert error['detail'] == '404 - Campsite Not Found!'
@@ -780,15 +791,37 @@ class TestPostUserFavouriteCampsite:
 @pytest.mark.main
 class TestGetUserCampsiteFavourites:
     def test_read_favourites(self, test_db):
-        response = client.get('/users/NatureExplorer/favourites')
+        response = client.get('/users/1/favourites')
         assert response.status_code == 200
+
         favourites = response.json()
         assert len(favourites) == 2
         assert favourites[0]['campsite_name'] == 'CAMPSITE A'
         assert favourites[1]['campsite_name'] == 'CAMPSITE C'
 
+        assert favourites[1]['campsite_longitude'] == -1.81234
+        assert favourites[1]['campsite_latitude'] == 53.123456
+        assert favourites[1]['contacts'][0]['campsite_contact_name'] == 'Jack Doe'
+        assert favourites[1]['contacts'][0]['campsite_contact_phone'] == '321-654-9870'
+        assert favourites[1]['contacts'][0]['campsite_contact_email'] == 'abc@xyz.com'
+        assert favourites[1]['contacts'][0]['campsite_contact_id'] == 3
+        assert favourites[1]['contacts'][0]['campsite_id'] == 3
+        assert favourites[1]['parking_cost'] == 13.0
+        assert favourites[1]['facilities_cost'] == 26.0
+        assert favourites[1]['description'] == 'CAMPSITE C offers prime access to river adventures in a picturesque setting.'
+        assert favourites[1]['opening_month'] is None
+        assert favourites[1]['closing_month'] is None
+        assert favourites[1]['user_account_id'] == 1
+        assert favourites[1]['photos'] == []
+        assert favourites[1]['campsite_id'] == 3
+        assert favourites[1]['category']['category_name'] == 'Campsite'
+        assert favourites[1]['category']['category_img_url'] == 'https://example.com/category4.jpg'
+        assert favourites[1]['category']['category_id'] == 3
+        assert favourites[1]['approved'] is True
+        assert favourites[1]['average_rating'] == 0.0
+
     def test_user_with_no_favourited_campsites(self, test_db):
-        response = client.get('/users/ForestFanatic/favourites')
+        response = client.get('/users/3/favourites')
         assert response.status_code == 200
         favourites = response.json()
         assert len(favourites) == 0
@@ -799,41 +832,41 @@ class TestGetUserCampsiteFavourites:
         assert response.status_code == 404
         error = response.json()
 
-        assert error['detail'] == "404 - User Not Found!"
+        assert error['detail'] == "404 - User Account Not Found!"
 
 
 @pytest.mark.main
 class TestDeleteUserFavouriteCampsite:
     def test_delete_user_favourite_campsite(self, test_db):
-        response = client.delete("/users/NatureExplorer/favourites/3")
+        response = client.delete("/users/1/favourites/3")
         assert response.status_code == 204
 
     def test_404_user_not_found(self, test_db):
-        response = client.delete("/users/NONEXISTENT/favourites/1")
+        response = client.delete("/users/987654321/favourites/1")
         assert response.status_code == 404
         error = response.json()
-        assert error['detail'] == '404 - User Not Found!'
+        assert error['detail'] == '404 - User Account Not Found!'
 
     def test_404_campsite_not_found(self, test_db):
-        response = client.delete("/users/PeakHiker92/favourites/987654321")
+        response = client.delete("/users/1/favourites/987654321")
         assert response.status_code == 404
         error = response.json()
         assert error['detail'] == '404 - Campsite Not Found!'
 
 
-@pytest.mark.db_utils
+@pytest.mark.current
 class TestUpdateCampsiteAverageRatingUtility:
     def test_updates_average_rating(self, test_db):
         request_body_1 = {
             "rating": 1,
             "campsite_id": 3,
-            "username": "NatureExplorer",
+            "user_account_id": 1,
             "comment": "Really great spot"
         }
         request_body_2 = {
             "rating": 5,
             "campsite_id": 3,
-            "username": "NatureExplorer",
+            "user_account_id": 1,
             "comment": "Really great spot"
         }
 

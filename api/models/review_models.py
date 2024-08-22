@@ -9,8 +9,10 @@ class Review(Base):
     review_id = Column(Integer, primary_key=True)
     rating = Column(Integer)
     comment = Column(String)
-    username = Column(String, ForeignKey("users.username"))
+    user_account_id = Column(Integer, ForeignKey("user_accounts.user_account_id"))
 
     campsite_id = Column(Integer, ForeignKey(
         "campsites.campsite_id", ondelete="CASCADE"))
+    
+    user_account = relationship("User_Account", back_populates="reviews")
     campsite = relationship("Campsite", back_populates="reviews")

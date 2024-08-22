@@ -3,18 +3,18 @@ from datetime import timedelta, datetime, timezone
 from starlette import status
 from jose import jwt
 from api.config.config import SECRET_KEY, ALGORITHM
-from api.models.user_models import User
-from api.schemas.user_schemas import CreateUserRequest
+from api.models.user_models import User_Credentials
+from api.schemas.user_schemas import CreateUserCredentialsRequest
 from api.utils.security.password_utils import hash_password, verify_password
 
 
-def create_user(db, request: CreateUserRequest):
-    existing_user = db.query(User).filter(
-        User.username == request.username).first()
+def create_user(db, request: CreateUserCredentialsRequest):
+    existing_user = db.query(User_Credentials).filter(
+        User_Credentials.username == request.username).first()
     if existing_user:
         raise HTTPException(status_code=409, detail="Username already exists.")
 
-    new_user = User(
+    new_user = User_Credentials(
         username=request.username,
         hashed_password=hash_password(request.password)
     )
@@ -38,7 +38,7 @@ def create_access_token_on_login(db, form_data):
 
 
 def authenticate_user(username: str, password: str, db):
-    user = db.query(User).filter(User.username == username).first()
+    user = db.query(User_Credentials).filter(User_Credentials.username == username).first()
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
