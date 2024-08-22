@@ -4,7 +4,7 @@ from typing import Annotated
 
 class ReviewBase(BaseModel):
     rating: Annotated[int, Field(ge=1, le=5)]
-    username: str
+    user_account_id: int
     comment: Annotated[str, Field(max_length=350)] | None = ""
 
     @field_validator('rating')
