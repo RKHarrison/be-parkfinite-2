@@ -778,7 +778,7 @@ class TestPostUserFavouriteCampsite:
         response = client.post("/users/NONEXISTENT/favourites/1")
         assert response.status_code == 404
         error = response.json()
-        assert error['detail'] == '404 - User Not Found!'
+        assert error['detail'] == '404 - User Account Not Found!'
 
     def test_404_campsite_not_found(self, test_db):
         response = client.post("/users/2/favourites/987654321")
