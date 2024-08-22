@@ -174,11 +174,11 @@ def get_complete_seed_test_data():
                             campsite_contact_name="Jack Doe", campsite_contact_phone="321-654-9870")
         ],
         'review': [
-            Review(rating=5, campsite_id=1, username="NatureExplorer",
+            Review(rating=5, campsite_id=1, user_account_id=1,
                    comment="Stunning location, completely serene. Can't wait to come back."),
-            Review(rating=5, campsite_id=2, username="PeakHiker92",
+            Review(rating=5, campsite_id=2, user_account_id=2,
                    comment="As a hiker, this place is a dream. Trails for all levels are accessible."),
-            Review(rating=5, campsite_id=3, username="ForestFanatic",
+            Review(rating=5, campsite_id=3, user_account_id=3,
                    comment="A forest haven. Quiet, peaceful, and beautifully green.")
         ],
         'users_credentials': [
@@ -188,11 +188,11 @@ def get_complete_seed_test_data():
 
         ],
         'user_accounts': [
-            User_Account(username="NatureExplorer", user_id=1, user_firstname="Alice", user_lastname="Wanderlust",
+            User_Account(user_id=1, user_firstname="Alice", user_lastname="Wanderlust",
                  user_email="alice@example.com", xp=500, user_type="NORMAL", camera_permission=True),
-            User_Account(username="PeakHiker92", user_id=2, user_firstname="Bob", user_lastname="Hills",
+            User_Account(user_id=2, user_firstname="Bob", user_lastname="Hills",
                  user_email="bob92@example.com", xp=0, user_type="NORMAL", camera_permission=True),
-            User_Account(username="ForestFanatic", user_id=3, user_firstname="Clara", user_lastname="Greenwood",
+            User_Account(user_id=3, user_firstname="Clara", user_lastname="Greenwood",
                  user_email="clara.fanatic@example.com", xp=0, user_type="NORMAL", camera_permission=True)
         ]
     }
