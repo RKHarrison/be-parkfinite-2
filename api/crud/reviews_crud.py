@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from api.models.review_models import Review
 from api.models.campsite_models import Campsite
-from api.models.user_models import User_Account
+from api.models.user_models import User_Account, User_Credentials
 from api.schemas.review_schemas import ReviewCreateRequest, ReviewUpdateRequest
 from api.utils.update_campsite_average_rating import update_campsite_average_rating
 
@@ -31,9 +31,26 @@ def create_review_by_campsite_id(db, campsite_id: int, request: ReviewCreateRequ
 
 
 def read_reviews_by_campsite_id(db, id: int):
-    reviews = db.query(Review).filter(Review.campsite_id == id).all()
-    return reviews
+    reviews = db.query(
+        Review,
+        User_Credentials.username
+    ).join(
+        User_Account, User_Account.user_account_id == Review.user_account_id
+    ).join(
+        User_Credentials, User_Credentials.user_id == User_Account.user_id
+    ).filter(
+        Review.campsite_id == id
+    ).all()
+    
+    reviews_with_username = []
+    for review, username in reviews:
+        review_data = review.__dict__
+        review_data.update({'username': username})
+        review_data.pop('_sa_instance_state', None)
+        reviews_with_username.append(review_data)
 
+    print(reviews_with_username)
+    return reviews_with_username
 
 def update_review_by_review_id(db, campsite_id: int, review_id: int, request: ReviewUpdateRequest):
     review = db.get(Review, review_id)

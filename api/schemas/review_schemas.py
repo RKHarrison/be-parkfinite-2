@@ -29,6 +29,7 @@ class ReviewUpdateRequest(ReviewBase):
 class Review(ReviewBase):
     review_id: int
     campsite_id: int
+    username: str
 
     class ConfigDict:
         from_attributes = True
