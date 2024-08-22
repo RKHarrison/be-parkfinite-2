@@ -23,6 +23,13 @@ class ReviewBase(BaseModel):
 class ReviewCreateRequest(ReviewBase):
     pass
 
+class ReviewCreateResponse(ReviewBase):
+    review_id: int
+    user_account_id: int
+    campsite_id: int
+    rating: Annotated[int, Field(ge=1, le=5)]
+    comment: Annotated[str, Field(max_length=350)] | None = ""
+
 class ReviewUpdateRequest(ReviewBase):
     rating: Annotated[int, Field(ge=1, le=5)] | None = None
 

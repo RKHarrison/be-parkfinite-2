@@ -27,6 +27,7 @@ def create_review_by_campsite_id(db, campsite_id: int, request: ReviewCreateRequ
     db.commit()
     db.refresh(new_review)
     update_campsite_average_rating(db, campsite_id, Campsite, Review)
+    
     return new_review
 
 
@@ -49,7 +50,6 @@ def read_reviews_by_campsite_id(db, id: int):
         review_data.pop('_sa_instance_state', None)
         reviews_with_username.append(review_data)
 
-    print(reviews_with_username)
     return reviews_with_username
 
 def update_review_by_review_id(db, campsite_id: int, review_id: int, request: ReviewUpdateRequest):

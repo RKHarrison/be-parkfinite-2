@@ -81,7 +81,7 @@ def test_db_class_scope():
         test_session.close()
 
 
-@pytest.mark.current
+@pytest.mark.main
 class TestPostCampsite:
     def test_basic_campsite_with_category(self, test_db):
         request_body = {
@@ -327,7 +327,7 @@ class TestPostCampsite:
         assert "contacts" in response.json()['detail'][0]['loc']
 
 
-@pytest.mark.current
+@pytest.mark.main
 class TestGetCampsites:
     def test_read_campsites(self, test_db):
         response = client.get("/campsites")
@@ -380,7 +380,7 @@ class TestGetCampsiteById:
         assert response.json()["detail"] == "404 - Campsite Not Found!"
 
 
-@pytest.mark.main
+@pytest.mark.current
 class TestPostReviewByCampsiteId:
     def test_post_review(self, test_db):
         request_body = {
