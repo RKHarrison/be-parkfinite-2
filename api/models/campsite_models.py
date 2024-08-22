@@ -37,8 +37,8 @@ class Campsite(Base):
     date_added = Column(String, default=date_stamp())
     approved = Column(Boolean, default=False)
 
-    #relationship to the user who posted the campsite
-    user_account_id = Column(Integer, ForeignKey("user_accounts.user_id"))
+    # relationship to the user who posted the campsite
+    user_account_id = Column(Integer, ForeignKey("user_accounts.user_account_id"))
     user_account = relationship("User_Account", back_populates="campsites")
 
     category_id = Column(Integer, ForeignKey("categories.category_id"))
@@ -53,9 +53,8 @@ class Campsite(Base):
         "CampsitePhoto", back_populates="campsite", cascade="all, delete-orphan")
     favourited_by: Mapped[List["User_Account"]] = relationship(
         'User_Account', secondary=user_campsite_favourites, back_populates='favourites')
-        
-    # facilities: Mapped[List["Facility"]] = relationship(secondary=campsites_facilities, cascade="all, delete-orphan")
 
+    # facilities: Mapped[List["Facility"]] = relationship(secondary=campsites_facilities, cascade="all, delete-orphan")
 
 
 class CampsiteContact(Base):
