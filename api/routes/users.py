@@ -34,7 +34,7 @@ def patch_user_xp(user_id: str, xp: str, db: Session = Depends(get_db), user=use
 
 @router.get("/{user_id}/favourites", response_model=list[Campsite])
 def get_user_favourite_campsites(user_id, db: Session = Depends(get_db), user=user_dependency):
-    favourites = read_user_campsite_favourites_by_user_id(db, user_id)
+    favourites = read_user_campsite_favourites_by_user_id(db, user_id=user_id)
     print(favourites)
     return favourites
 
