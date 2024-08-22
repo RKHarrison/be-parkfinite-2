@@ -81,17 +81,17 @@ def test_db_class_scope():
         test_session.close()
 
 
-@pytest.mark.main
+@pytest.mark.current
 class TestPostCampsite:
     def test_basic_campsite_with_category(self, test_db):
         request_body = {
+            "user_account_id": 1,
             "campsite_name": "TEST NAME",
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
             "photos": [],
             "parking_cost": 10.30,
             "facilities_cost": 2.50,
-            "added_by": "PeakHiker92",
             "category_id": 3,
             "opening_month": "April",
             "closing_month": "May"
@@ -107,7 +107,7 @@ class TestPostCampsite:
         assert posted_campsite["campsite_latitude"] == 4.56
         assert posted_campsite['parking_cost'] == 10.30
         assert posted_campsite['facilities_cost'] == 2.50
-        assert posted_campsite['added_by'] == "PeakHiker92"
+        assert posted_campsite['user_account_id'] == 1
         assert posted_campsite['category']['category_id'] == 3
         assert posted_campsite['category']['category_name'] == "Campsite"
         assert posted_campsite['category']['category_img_url'] == "https://example.com/category4.jpg"
@@ -123,7 +123,7 @@ class TestPostCampsite:
     def test_campsite_with_photo(self, test_db):
         request_body = {
             "campsite_name": "TEST NAME",
-            "added_by": "PeakHiker92",
+            "user_account_id": 1,
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
             "category_id": 3,
@@ -143,7 +143,7 @@ class TestPostCampsite:
     def test_campsite_multiple_photos(self, test_db):
         request_body = {
             "campsite_name": "TEST NAME",
-            "added_by": "PeakHiker92",
+            "user_account_id": 1,
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
             "category_id": 3,
@@ -179,12 +179,12 @@ class TestPostCampsite:
     def test_campsite_with_contact(self, test_db):
         request_body = {
             "campsite_name": "TEST NAME",
+            "user_account_id": 1,
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
             "photos": [],
             "parking_cost": 10.30,
             "facilities_cost": 2.50,
-            "added_by": "PeakHiker92",
             "category_id": 3,
             "opening_month": "April",
             "closing_month": "May",
@@ -206,12 +206,12 @@ class TestPostCampsite:
     def test_campsite_multiple_contacts(self, test_db):
         request_body = {
             "campsite_name": "TEST NAME",
+            "user_account_id": 1,
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
             "photos": [],
             "parking_cost": 10.30,
             "facilities_cost": 2.50,
-            "added_by": "PeakHiker92",
             "category_id": 3,
             "opening_month": "April",
             "closing_month": "May",
@@ -237,10 +237,10 @@ class TestPostCampsite:
     def test_404_category_not_found(self, test_db):
         request_body = {
             "category_id": 987654321,
+            "user_account_id": 1,
             "campsite_name": "TEST NAME",
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
-            "added_by": "PeakHiker92",
             "photos": []
         }
         response = client.post("/campsites", json=request_body)
@@ -250,9 +250,9 @@ class TestPostCampsite:
 
     def test_422_field_missing_from_request_body(self, test_db):
         request_body = {
+            "user_account_id": 1,
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
-            "added_by": "PeakHiker92",
             "category_id": 3,
         }
         response = client.post("/campsites", json=request_body)
@@ -261,10 +261,10 @@ class TestPostCampsite:
 
     def test_422_invalid_data_in_basic_campsite_request_body(self, test_db):
         request_body = {
+            "user_account_id": 1,
             "campsite_name": "TEST NAME",
             "campsite_longitude": "INVALID",
             "campsite_latitude": 4.56,
-            "added_by": "PeakHiker92",
             "category_id": 3
         }
         response = client.post("/campsites", json=request_body)
@@ -273,10 +273,10 @@ class TestPostCampsite:
 
     def test_422_invalid_PHOTO_info(self, test_db):
         request_body = {
+            "user_account_id": 1,
             "campsite_name": "TEST NAME",
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
-            "added_by": "PeakHiker92",
             "category_id": 3,
             # PHOTO URL SHOULD BE A STRING!!
             "photos": [{"campsite_photo_url": 00000000}]
@@ -287,10 +287,10 @@ class TestPostCampsite:
 
     def test_invalid_PHOTOS_data_structure(self, test_db):
         request_body = {
+            "user_account_id": 1,
             "campsite_name": "TEST NAME",
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
-            "added_by": "PeakHiker92",
             "category_id": 3,
             "photos": "SHOULD BE A LIST"
         }
@@ -300,10 +300,10 @@ class TestPostCampsite:
 
     def test_422_invalid_CONTACT_info(self, test_db):
         request_body = {
+            "user_account_id": 1,
             "campsite_name": "TEST NAME",
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
-            "added_by": "PeakHiker92",
             "category_id": 3,
             # CONTACT NUMBER SHOULD BE A STRING!!
             "contacts": [{"campsite_contact_name": "Bobby B", "campsite_contact_phone": 000000000000}]
@@ -315,10 +315,10 @@ class TestPostCampsite:
 
     def test_invalid_CONTACTS_data_structure(self, test_db):
         request_body = {
+            "user_account_id": 1,
             "campsite_name": "TEST NAME",
             "campsite_longitude": 1.23,
             "campsite_latitude": 4.56,
-            "added_by": "PeakHiker92",
             "category_id": 3,
             "contacts": "SHOULD BE A LIST"
         }
@@ -457,7 +457,7 @@ class TestPostReviewByCampsiteId:
         assert error['detail'] == "404 - Campsite Not Found!"
 
 
-@pytest.mark.current
+@pytest.mark.main
 class TestGetReviewsByCampsiteId:
     def test_read_reviews_by_campsite_id(self, test_db):
         response = client.get("/campsites/1/reviews")
