@@ -709,7 +709,7 @@ class TestAuthenticatedEndpointAccess:
 #         assert len(users) == 3
 
 
-@pytest.mark.current
+@pytest.mark.main
 class TestGetUserAccountByUserId:
     def test_read_user_account_by_user_id(self, test_db):
         response = client.get('/users/1')
@@ -732,7 +732,7 @@ class TestGetUserAccountByUserId:
         assert error["detail"] == "404 - User Account Not Found!"
 
 
-@pytest.mark.current
+@pytest.mark.main
 class TestUpdateUserXP:
     def test_patch_user_xp_by_user_id(self, test_db):
         response1 = client.patch('/users/1/25')
@@ -764,14 +764,14 @@ class TestUpdateUserXP:
         assert error['detail'] == "404 - User Account Not Found!"
 
 
-@pytest.mark.main
+@pytest.mark.current
 class TestPostUserFavouriteCampsite:
-    def test_create_user_favourite_campsite(self, test_db):
-        response = client.post("/users/PeakHiker92/favourites/2")
+    def test_create_user_favourite_campsite(self, test_db_class_scope):
+        response = client.post("/users/2/favourites/2")
         assert response.status_code == 201
 
-    def test_409_user_favourite_campsite_already_exists(self, test_db):
-        response = client.post("/users/NatureExplorer/favourites/1")
+    def test_409_user_favourite_campsite_already_exists(self, test_db_class_scope):
+        response = client.post("/users/2/favourites/2")
         assert response.status_code == 409
 
     def test_404_user_not_found(self, test_db):
@@ -781,7 +781,7 @@ class TestPostUserFavouriteCampsite:
         assert error['detail'] == '404 - User Not Found!'
 
     def test_404_campsite_not_found(self, test_db):
-        response = client.post("/users/PeakHiker92/favourites/987654321")
+        response = client.post("/users/2/favourites/987654321")
         assert response.status_code == 404
         error = response.json()
         assert error['detail'] == '404 - Campsite Not Found!'
