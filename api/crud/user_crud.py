@@ -57,8 +57,8 @@ def read_user_campsite_favourites_by_user_id(db, user_id: str):
 
 
 def remove_user_favourite_campsite(db, user_id, campsite_id):
-    user = db.query(User_Account).filter(User_Account.user_id == user_id).first()
-    if not user:
+    user_account = db.query(User_Account).filter(User_Account.user_id == user_id).first()
+    if not user_account:
         raise HTTPException(status_code=404, detail="404 - User Account Not Found!")
 
     campsite = db.get(Campsite, campsite_id)
@@ -66,8 +66,8 @@ def remove_user_favourite_campsite(db, user_id, campsite_id):
         raise HTTPException(
             status_code=404, detail="404 - Campsite Not Found!")
 
-    if campsite in user.favourites:
-        user.favourites.remove(campsite)
+    if campsite in user_account.favourites:
+        user_account.favourites.remove(campsite)
         db.commit()
         return {"message": f"Campsite {campsite.campsite_id} removed from favourites."}
     else:
