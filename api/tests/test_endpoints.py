@@ -13,7 +13,7 @@ from api.data.test_data import get_test_data
 from api.utils.seed_database import seed_database
 from api.utils.test_utils import is_valid_date, get_test_user_token
 from api.crud.auth_crud import create_access_token
-from api.models.user_models import User
+from api.models.user_models import User_Credentials
 
 from os import environ
 environ['ENV'] = 'development'
@@ -391,7 +391,6 @@ class TestPostReviewByCampsiteId:
             "comment": "Really great spot"
         }
         response = client.post("/campsites/1/reviews", json=request_body)
-        print(response.json())
         assert response.status_code == 201
 
         posted_review = response.json()
@@ -572,8 +571,8 @@ class TestPostUser:
         assert response.json()[
             'message'] == "User created successfully, please log in to continue."
 
-        user = test_db_class_scope.query(User).filter(
-            User.username == "Rich1234").first()
+        user = test_db_class_scope.query(User_Credentials).filter(
+            User_Credentials.username == "Rich1234").first()
         assert user.username == "Rich1234"
         assert isinstance(user.hashed_password, bytes)
         assert isinstance(user.user_id, int)
@@ -665,7 +664,7 @@ class TestAuthenticateUser:
         assert error['detail'] == "Incorrect username or password. Please try again.", 'does not aurthorise when using unauthorised characters to attempt sql injection'
 
 
-@pytest.mark.current
+@pytest.mark.main
 class TestAuthenticatedEndpointAccess:
     def test_authorized_endpoint_access(self, test_db):
         token_response = client.post(
@@ -675,9 +674,8 @@ class TestAuthenticatedEndpointAccess:
         response = client.get("/campsites/1", headers=headers)
         assert response.status_code == 200
 
-        # logged_in_user = response.json()
-        # assert logged_in_user['User'] == {
-        #     'username': 'NatureExplorer', 'id': 1}
+        campsite = response.json()
+        assert campsite['campsite_id'] == 1
 
     def test_401_no_access_token(self, test_db):
         expired_token = create_access_token(
