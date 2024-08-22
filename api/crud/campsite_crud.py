@@ -14,12 +14,12 @@ def create_campsite(db, request: CampsiteCreateRequest):
             status_code=422, detail="Category ID does not exist!")
 
     new_campsite = Campsite(
+        user_account_id=request.user_account_id,
         campsite_name=request.campsite_name,
         campsite_longitude=request.campsite_longitude,
         campsite_latitude=request.campsite_latitude,
         parking_cost=request.parking_cost,
         facilities_cost=request.facilities_cost,
-        added_by=request.added_by,
         category_id=request.category_id,
         opening_month=request.opening_month,
         closing_month=request.closing_month
