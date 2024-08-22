@@ -50,11 +50,10 @@ def create_user_favourite_campsite(db, user_id, campsite_id):
 
 
 def read_user_campsite_favourites_by_user_id(db, user_id: str):
-    user = db.query(User_Account).filter(User_Account.user_id == user_id).first()
-    if not user:
+    user_account = db.query(User_Account).filter(User_Account.user_id == user_id).first()
+    if not user_account:
         raise HTTPException(status_code=404, detail="404 - User Account Not Found!")
-    print(user.user_id)
-    return user.favourites
+    return user_account.favourites
 
 
 def remove_user_favourite_campsite(db, user_id, campsite_id):

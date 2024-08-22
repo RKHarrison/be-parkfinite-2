@@ -764,7 +764,7 @@ class TestUpdateUserXP:
         assert error['detail'] == "404 - User Account Not Found!"
 
 
-@pytest.mark.current
+@pytest.mark.main
 class TestPostUserFavouriteCampsite:
     def test_create_user_favourite_campsite(self, test_db_class_scope):
         response = client.post("/users/2/favourites/2")
@@ -787,18 +787,19 @@ class TestPostUserFavouriteCampsite:
         assert error['detail'] == '404 - Campsite Not Found!'
 
 
-@pytest.mark.main
+@pytest.mark.current
 class TestGetUserCampsiteFavourites:
     def test_read_favourites(self, test_db):
-        response = client.get('/users/NatureExplorer/favourites')
+        response = client.get('/users/1/favourites')
         assert response.status_code == 200
         favourites = response.json()
+        print(favourites)
         assert len(favourites) == 2
         assert favourites[0]['campsite_name'] == 'CAMPSITE A'
         assert favourites[1]['campsite_name'] == 'CAMPSITE C'
 
     def test_user_with_no_favourited_campsites(self, test_db):
-        response = client.get('/users/ForestFanatic/favourites')
+        response = client.get('/users/3/favourites')
         assert response.status_code == 200
         favourites = response.json()
         assert len(favourites) == 0
@@ -809,7 +810,7 @@ class TestGetUserCampsiteFavourites:
         assert response.status_code == 404
         error = response.json()
 
-        assert error['detail'] == "404 - User Not Found!"
+        assert error['detail'] == "404 - User Account Not Found!"
 
 
 @pytest.mark.main
