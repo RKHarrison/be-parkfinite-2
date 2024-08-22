@@ -381,7 +381,7 @@ class TestGetCampsiteById:
         assert response.json()["detail"] == "404 - Campsite Not Found!"
 
 
-@pytest.mark.current
+@pytest.mark.main
 class TestPostReviewByCampsiteId:
     def test_post_review(self, test_db):
         request_body = {
@@ -462,8 +462,12 @@ class TestGetReviewsByCampsiteId:
     def test_read_reviews_by_campsite_id(self, test_db):
         response = client.get("/campsites/1/reviews")
         assert response.status_code == 200
+
         reviews = response.json()
         assert len(reviews) == 3
+        assert reviews[0]['username'] == 'NatureExplorer'
+        assert reviews[2] == {'rating': 5, 'user_account_id': 3, 'comment': None,
+                              'review_id': 3, 'campsite_id': 1, 'username': 'ForestFanatic'}
 
     def test_read_reviews_by_different_campsite_id(self, test_db):
         response = client.get("/campsites/2/reviews")
@@ -476,7 +480,7 @@ class TestGetReviewsByCampsiteId:
         assert reviews == []
 
 
-@pytest.mark.current
+@pytest.mark.main
 class TestPatchReviewsByReviewId:
     def test_patch_review_by_campsite_id(self, test_db):
         request_body = {
