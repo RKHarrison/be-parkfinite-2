@@ -14,6 +14,7 @@ from api.utils.seed_database import seed_database
 from api.utils.test_utils import is_valid_date, get_test_user_token
 from api.crud.auth_crud import create_access_token
 from api.models.user_models import User_Credentials
+from api.schemas.campsite_schemas import Campsite
 
 from os import environ
 environ['ENV'] = 'development'
@@ -792,11 +793,32 @@ class TestGetUserCampsiteFavourites:
     def test_read_favourites(self, test_db):
         response = client.get('/users/1/favourites')
         assert response.status_code == 200
+
         favourites = response.json()
-        print(favourites)
         assert len(favourites) == 2
         assert favourites[0]['campsite_name'] == 'CAMPSITE A'
         assert favourites[1]['campsite_name'] == 'CAMPSITE C'
+        
+        assert favourites[1]['campsite_longitude'] == -1.81234
+        assert favourites[1]['campsite_latitude'] == 53.123456
+        assert favourites[1]['contacts'][0]['campsite_contact_name'] == 'Jack Doe'
+        assert favourites[1]['contacts'][0]['campsite_contact_phone'] == '321-654-9870'
+        assert favourites[1]['contacts'][0]['campsite_contact_email'] == 'abc@xyz.com'
+        assert favourites[1]['contacts'][0]['campsite_contact_id'] == 3
+        assert favourites[1]['contacts'][0]['campsite_id'] == 3
+        assert favourites[1]['parking_cost'] == 13.0
+        assert favourites[1]['facilities_cost'] == 26.0
+        assert favourites[1]['description'] == 'CAMPSITE C offers prime access to river adventures in a picturesque setting.'
+        assert favourites[1]['opening_month'] is None
+        assert favourites[1]['closing_month'] is None
+        assert favourites[1]['user_account_id'] == 1
+        assert favourites[1]['photos'] == []
+        assert favourites[1]['campsite_id'] == 3
+        assert favourites[1]['category']['category_name'] == 'Campsite'
+        assert favourites[1]['category']['category_img_url'] == 'https://example.com/category4.jpg'
+        assert favourites[1]['category']['category_id'] == 3
+        assert favourites[1]['approved'] is True
+        assert favourites[1]['average_rating'] == 0.0
 
     def test_user_with_no_favourited_campsites(self, test_db):
         response = client.get('/users/3/favourites')
