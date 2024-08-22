@@ -36,3 +36,4 @@ class User_Account(Base):
     favourites: Mapped[List["Campsite"]] = relationship(
         'Campsite', secondary=user_campsite_favourites, back_populates='favourited_by')
     reviews = relationship("Review", back_populates="user_account", lazy='dynamic')
+    campsites = relationship("Campsite", back_populates="user_account", lazy='dynamic')
