@@ -1,4 +1,4 @@
-from api.models.user_models import user_campsite_favourites, User
+from api.models.user_models import user_campsite_favourites
 from api.config.config import PRE_HASHED_USER_PASSWORD
 
 
@@ -39,7 +39,7 @@ def seed_contacts(session, contacts):
     session.commit()
 
 
-def seed_users(session, users):
+def seed_users_credentials(session, users_credentials):
     # Pre-hashed password to speed up the seeding process
     # This password was generated using the `hash_password` utility function.
     # It must be stored in a .ENV named .env.pre_hashed_user_password
@@ -48,11 +48,15 @@ def seed_users(session, users):
     # PRE_HASHED_USER_PASSWORD=b'HASHEDPASSWORDHERE'
     # If you need to update the password or set up a new local repo... 
     # generate a new hash using: `hash_password('your_password_here')`
-    for user in users:
-        user.hashed_password = PRE_HASHED_USER_PASSWORD
-        session.add(user)
+    for user_credentials in users_credentials:
+        user_credentials.hashed_password = PRE_HASHED_USER_PASSWORD
+        session.add(user_credentials)
     session.commit()
 
+def seed_user_accounts(session, user_accounts):
+    for user_account in user_accounts:
+        session.add(user_account)
+    session.commit()
 
 def seed_reviews(session, reviews):
     for review in reviews:
@@ -69,8 +73,10 @@ def seed_user_campsite_favourites(session, favourites_data, user_campsite_favour
 
 
 def seed_database(session, data):
-    if 'user' in data:
-        seed_users(session, data['user'])
+    if 'users_credentials' in data:
+        seed_users_credentials(session, data['users_credentials'])
+    if 'user_accounts' in data:
+        seed_user_accounts(session, data['user_accounts'])
     if 'campsite_category' in data:
         seed_categories(session, data['campsite_category'])
     if 'facility' in data:

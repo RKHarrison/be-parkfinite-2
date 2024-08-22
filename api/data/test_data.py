@@ -3,7 +3,7 @@ from api.models.campsite_models import Campsite, CampsitePhoto, CampsiteContact,
 from api.models.activity_models import Activity
 from api.models.facility_models import Facility
 from api.models.review_models import Review
-from api.models.user_models import User
+from api.models.user_models import User_Credentials, User_Account
 
 
 def get_test_data():
@@ -61,12 +61,17 @@ def get_test_data():
             Review(rating=2, campsite_id=2, username="ForestFanatic",
                    comment="Its ok I guess")
         ],
-        'user': [
-            User(username="NatureExplorer", user_firstname="Alice", user_lastname="Wanderlust",
+        'users_credentials': [
+            User_Credentials(username="NatureExplorer"),
+            User_Credentials(username="PeakHiker92"),
+            User_Credentials(username="ForestFanatic")
+        ],
+        'user_accounts': [
+            User_Account(username="NatureExplorer", user_id=1, user_firstname="Alice", user_lastname="Wanderlust",
                  user_email="alice@example.com", xp=500, user_type="NORMAL", camera_permission=True),
-            User(username="PeakHiker92", user_firstname="Bob", user_lastname="Hills",
+            User_Account(username="PeakHiker92", user_id=2, user_firstname="Bob", user_lastname="Hills",
                  user_email="bob92@example.com", xp=0, user_type="NORMAL", camera_permission=True),
-            User(username="ForestFanatic", user_firstname="Clara",
+            User_Account(username="ForestFanatic", user_id=3, user_firstname="Clara",
                  user_lastname="Greenwood", user_email="clara.fanatic@example.com")
         ],
         'user_campsite_favourites': [
