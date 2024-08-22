@@ -2,10 +2,10 @@ from fastapi import HTTPException
 from api.models.user_models import User_Account, user_campsite_favourites
 from api.models.campsite_models import Campsite
 
-
-def read_users(db):
-    users = db.query(User_Account).all()
-    return users
+# DISABLED PENDING AMDMINISTRATION LEVEL RESTRICTION
+# def read_users(db):
+#     users = db.query(User_Account).all()
+#     return users
 
 
 def read_user_by_username(db, username):

@@ -479,7 +479,7 @@ class TestGetReviewsByCampsiteId:
         assert reviews == []
 
 
-@pytest.mark.current
+@pytest.mark.main
 class TestPatchReviewsByReviewId:
     def test_patch_review_by_campsite_id(self, test_db):
         request_body = {
@@ -699,13 +699,14 @@ class TestAuthenticatedEndpointAccess:
         assert error['detail'] == 'Login has expired or is invalid. Please login again.', "Access denied once token expired."
 
 
-@pytest.mark.main
-class TestGetUsers:
-    def test_read_users(self, test_db):
-        response = client.get("/users")
-        assert response.status_code == 200
-        users = response.json()
-        assert len(users) == 3
+# DISABLED PENDING AMDMINISTRATION LEVEL RESTRICTION
+# @pytest.mark.current
+# class TestGetUsers:
+#     def test_read_users(self, test_db):
+#         response = client.get("/users")
+#         assert response.status_code == 200
+#         users = response.json()
+#         assert len(users) == 3
 
 
 @pytest.mark.main
