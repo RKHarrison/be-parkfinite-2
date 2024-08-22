@@ -34,8 +34,8 @@ def update_user_xp(db, user_id, xp):
     return user_account
 
 
-def create_user_favourite_campsite(db, username, campsite_id):
-    user = db.query(User_Account).filter(User_Account.username == username).first()
+def create_user_favourite_campsite(db, user_id, campsite_id):
+    user = db.query(User_Account).filter(User_Account.user_id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="404 - User Not Found!")
 
@@ -49,16 +49,16 @@ def create_user_favourite_campsite(db, username, campsite_id):
     return
 
 
-def read_user_campsite_favourites_by_username(db, username: str):
-    user = db.query(User_Account).filter(User_Account.username == username).first()
+def read_user_campsite_favourites_by_user_id(db, user_id: str):
+    user = db.query(User_Account).filter(User_Account.user_id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="404 - User Not Found!")
-    print(user.username)
+    print(user.user_id)
     return user.favourites
 
 
-def remove_user_favourite_campsite(db, username, campsite_id):
-    user = db.query(User_Account).filter(User_Account.username == username).first()
+def remove_user_favourite_campsite(db, user_id, campsite_id):
+    user = db.query(User_Account).filter(User_Account.user_id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="404 - User Not Found!")
 
