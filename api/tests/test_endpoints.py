@@ -835,7 +835,7 @@ class TestGetUserCampsiteFavourites:
         assert error['detail'] == "404 - User Account Not Found!"
 
 
-@pytest.mark.current
+@pytest.mark.main
 class TestDeleteUserFavouriteCampsite:
     def test_delete_user_favourite_campsite(self, test_db):
         response = client.delete("/users/1/favourites/3")
@@ -854,19 +854,19 @@ class TestDeleteUserFavouriteCampsite:
         assert error['detail'] == '404 - Campsite Not Found!'
 
 
-@pytest.mark.db_utils
+@pytest.mark.current
 class TestUpdateCampsiteAverageRatingUtility:
     def test_updates_average_rating(self, test_db):
         request_body_1 = {
             "rating": 1,
             "campsite_id": 3,
-            "username": "NatureExplorer",
+            "user_account_id": 1,
             "comment": "Really great spot"
         }
         request_body_2 = {
             "rating": 5,
             "campsite_id": 3,
-            "username": "NatureExplorer",
+            "user_account_id": 1,
             "comment": "Really great spot"
         }
 
