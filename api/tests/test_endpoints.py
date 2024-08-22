@@ -788,7 +788,7 @@ class TestPostUserFavouriteCampsite:
         assert error['detail'] == '404 - Campsite Not Found!'
 
 
-@pytest.mark.current
+@pytest.mark.main
 class TestGetUserCampsiteFavourites:
     def test_read_favourites(self, test_db):
         response = client.get('/users/1/favourites')
@@ -798,7 +798,7 @@ class TestGetUserCampsiteFavourites:
         assert len(favourites) == 2
         assert favourites[0]['campsite_name'] == 'CAMPSITE A'
         assert favourites[1]['campsite_name'] == 'CAMPSITE C'
-        
+
         assert favourites[1]['campsite_longitude'] == -1.81234
         assert favourites[1]['campsite_latitude'] == 53.123456
         assert favourites[1]['contacts'][0]['campsite_contact_name'] == 'Jack Doe'
@@ -835,20 +835,20 @@ class TestGetUserCampsiteFavourites:
         assert error['detail'] == "404 - User Account Not Found!"
 
 
-@pytest.mark.main
+@pytest.mark.current
 class TestDeleteUserFavouriteCampsite:
     def test_delete_user_favourite_campsite(self, test_db):
-        response = client.delete("/users/NatureExplorer/favourites/3")
+        response = client.delete("/users/1/favourites/3")
         assert response.status_code == 204
 
     def test_404_user_not_found(self, test_db):
-        response = client.delete("/users/NONEXISTENT/favourites/1")
+        response = client.delete("/users/987654321/favourites/1")
         assert response.status_code == 404
         error = response.json()
-        assert error['detail'] == '404 - User Not Found!'
+        assert error['detail'] == '404 - User Account Not Found!'
 
     def test_404_campsite_not_found(self, test_db):
-        response = client.delete("/users/PeakHiker92/favourites/987654321")
+        response = client.delete("/users/1/favourites/987654321")
         assert response.status_code == 404
         error = response.json()
         assert error['detail'] == '404 - Campsite Not Found!'
