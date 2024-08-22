@@ -65,10 +65,9 @@ def seed_reviews(session, reviews):
 
 
 def seed_user_campsite_favourites(session, favourites_data, user_campsite_favourites):
-    for username, campsite_ids in favourites_data:
-        for campsite_id in campsite_ids:
+    for id_array in favourites_data:
             session.execute(user_campsite_favourites.insert().values(
-                username=username, campsite_id=campsite_id))
+                user_account_id=id_array[0], campsite_id=id_array[1]))
     session.commit()
 
 

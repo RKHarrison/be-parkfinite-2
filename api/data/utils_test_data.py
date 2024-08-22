@@ -23,7 +23,7 @@ def get_single_item_seed_test_data():
                 facilities_cost=5.00,
                 description="A lovely spot for sunset views",
                 date_added=datetime.now().isoformat(),
-                added_by="Test Seeder",
+                user_account_id=1,
                 category_id=1
             )
         ]
@@ -41,7 +41,7 @@ def get_single_model_seed_test_data():
                 facilities_cost=5.00,
                 description="A lovely spot for sunset views",
                 date_added=datetime.now().isoformat(),
-                added_by="Test Seeder",
+                user_account_id=1,
                 category_id=1
             ),
             Campsite(
@@ -52,7 +52,7 @@ def get_single_model_seed_test_data():
                 facilities_cost=5.00,
                 description="A lovely spot for sunrise views",
                 date_added=datetime.now().isoformat(),
-                added_by="Test Seeder",
+               user_account_id=1,
                 category_id=1
             ),
             Campsite(
@@ -63,7 +63,7 @@ def get_single_model_seed_test_data():
                 facilities_cost=5.00,
                 description="A lovely spot for views",
                 date_added=datetime.now().isoformat(),
-                added_by="Test Seeder",
+                user_account_id=1,
                 category_id=1
             )
         ]
@@ -81,7 +81,7 @@ def get_complex_seed_test_data():
                 facilities_cost=5.00,
                 description="A lovely spot for sunset views",
                 date_added=datetime.now().isoformat(),
-                added_by="Test Seeder",
+                user_account_id=1,
                 category_id=1
             ),
             Campsite(
@@ -92,7 +92,7 @@ def get_complex_seed_test_data():
                 facilities_cost=10.00,
                 description="Escape into the mountains",
                 date_added=datetime.now().isoformat(),
-                added_by="Test Seeder",
+                user_account_id=2,
                 category_id=1
             )
         ],
@@ -151,11 +151,11 @@ def get_complete_seed_test_data():
         ],
         'campsite': [
             Campsite(campsite_name="CAMPSITE A", category_id=1, campsite_longitude=-1.54322, campsite_latitude=53.45645, parking_cost=12, facilities_cost=25,
-                     description="CAMPSITE A offers a serene setting amidst lush greenery, ideal for a peaceful retreat.", date_added=datetime.now().isoformat(), added_by="Admin", approved=True),
+                     description="CAMPSITE A offers a serene setting amidst lush greenery, ideal for a peaceful retreat.", date_added=datetime.now().isoformat(), user_account_id=1, approved=True),
             Campsite(campsite_name="CAMPSITE B", category_id=2, campsite_longitude=-1.87654, campsite_latitude=53.54321, parking_cost=14, facilities_cost=27,
-                     description="CAMPSITE B provides stunning views and vibrant sunsets nestled on gentle slopes.", date_added=datetime.now().isoformat(), added_by="Admin", approved=True),
+                     description="CAMPSITE B provides stunning views and vibrant sunsets nestled on gentle slopes.", date_added=datetime.now().isoformat(), user_account_id=2, approved=True),
             Campsite(campsite_name="CAMPSITE C", category_id=3, campsite_longitude=-1.81234, campsite_latitude=53.123456, parking_cost=13, facilities_cost=26,
-                     description="CAMPSITE C offers prime access to river adventures in a picturesque setting.", date_added=datetime.now().isoformat(), added_by="Admin", approved=True)
+                     description="CAMPSITE C offers prime access to river adventures in a picturesque setting.", date_added=datetime.now().isoformat(), user_account_id=3, approved=True)
         ],
         'campsite_photo': [
             CampsitePhoto(
