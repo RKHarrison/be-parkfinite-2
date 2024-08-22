@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 from database.database_utils.get_db import get_db
 from api.utils.security.authentication_utils import get_current_user
-from api.crud.user_crud import read_user_by_username, update_user_xp, create_user_favourite_campsite, read_user_campsite_favourites_by_username, remove_user_favourite_campsite
+from api.crud.user_crud import read_user_account_by_user_id, update_user_xp, create_user_favourite_campsite, read_user_campsite_favourites_by_username, remove_user_favourite_campsite
 from api.schemas.campsite_schemas import Campsite
 from api.schemas.user_schemas import UserAccountDetails
 
@@ -22,9 +22,9 @@ router = APIRouter(
 #     return read_users(db)
 
 
-@router.get("/{username}", response_model=UserAccountDetails)
-def get_user_by_id(username, db: Session = Depends(get_db), user=user_dependency):
-    return read_user_by_username(db, username)
+@router.get("/{user_id}", response_model=UserAccountDetails)
+def get_user_by_id(user_id, db: Session = Depends(get_db), user=user_dependency):
+    return read_user_account_by_user_id(db, user_id)
 
 
 @router.patch("/{username}/{xp}", response_model=UserAccountDetails)

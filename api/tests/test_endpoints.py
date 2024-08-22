@@ -709,22 +709,30 @@ class TestAuthenticatedEndpointAccess:
 #         assert len(users) == 3
 
 
-@pytest.mark.main
-class TestGetUserByUsername:
-    def test_read_user_by_username(self, test_db):
-        response = client.get('/users/NatureExplorer')
+@pytest.mark.current
+class TestGetUserAccountByUserId:
+    def test_read_user_account_by_user_id(self, test_db):
+        response = client.get('/users/1')
         assert response.status_code == 200
-        user = response.json()
-        assert user["username"] == "NatureExplorer"
+        
+        user_account = response.json()
+        assert isinstance(user_account["user_account_id"], int)
+        assert isinstance(user_account["user_id"], int)
+        assert isinstance(user_account["user_firstname"], str)
+        assert isinstance(user_account["user_lastname"], str)
+        assert isinstance(user_account["user_email"], str)
+        assert isinstance(user_account["xp"], int)
+        assert isinstance(user_account["user_type"], str)
+        assert isinstance(user_account["camera_permission"], bool)
 
     def test_404_non_existing_username(self, test_db):
         response = client.get('/users/NONEXISTING')
         assert response.status_code == 404
         error = response.json()
-        assert error["detail"] == "404 - User Not Found!"
+        assert error["detail"] == "404 - User Account Not Found!"
 
 
-@pytest.mark.main
+@pytest.mark.current
 class TestUpdateUserXP:
     def test_patch_user_xp(self, test_db):
         response1 = client.patch('/users/NatureExplorer/25')

@@ -8,11 +8,11 @@ from api.models.campsite_models import Campsite
 #     return users
 
 
-def read_user_by_username(db, username):
-    user = user = db.query(User_Account).filter(User_Account.username == username).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="404 - User Not Found!")
-    return user
+def read_user_account_by_user_id(db, user_id):
+    user_account = db.query(User_Account).filter(User_Account.user_id == user_id).first()
+    if not user_account:
+        raise HTTPException(status_code=404, detail="404 - User Account Not Found!")
+    return user_account
 
 
 def update_user_xp(db, username, xp):

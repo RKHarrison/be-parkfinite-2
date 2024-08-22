@@ -50,7 +50,8 @@ class CreateUserAccountDetails(UserAccountBase):
     camera_permission: bool
 
 
-class UserAccountDetails(UserCredentialsBase):
+class UserAccountDetails(UserAccountBase):
+    user_account_id: int
     user_firstname: str
     user_lastname: str
     user_email: str
