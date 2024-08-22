@@ -2,11 +2,11 @@ from fastapi import HTTPException
 from api.models.review_models import Review
 from api.models.campsite_models import Campsite
 from api.models.user_models import User_Account, User_Credentials
-from api.schemas.review_schemas import ReviewCreateRequest, ReviewUpdateRequest
+from api.schemas.review_schemas import ReviewPostRequest, ReviewPatchRequest
 from api.utils.update_campsite_average_rating import update_campsite_average_rating
 
 
-def create_review_by_campsite_id(db, campsite_id: int, request: ReviewCreateRequest):
+def create_review_by_campsite_id(db, campsite_id: int, request: ReviewPostRequest):
     campsite = db.query(Campsite).filter(
         Campsite.campsite_id == campsite_id).first()
     if not campsite:
@@ -52,7 +52,7 @@ def read_reviews_by_campsite_id(db, id: int):
 
     return reviews_with_username
 
-def update_review_by_review_id(db, campsite_id: int, review_id: int, request: ReviewUpdateRequest):
+def update_review_by_review_id(db, campsite_id: int, review_id: int, request: ReviewPatchRequest):
     review = db.get(Review, review_id)
     if not review:
         raise HTTPException(

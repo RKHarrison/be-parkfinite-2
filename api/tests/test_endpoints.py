@@ -380,7 +380,7 @@ class TestGetCampsiteById:
         assert response.json()["detail"] == "404 - Campsite Not Found!"
 
 
-@pytest.mark.current
+@pytest.mark.main
 class TestPostReviewByCampsiteId:
     def test_post_review(self, test_db):
         request_body = {
@@ -479,7 +479,7 @@ class TestGetReviewsByCampsiteId:
         assert reviews == []
 
 
-@pytest.mark.main
+@pytest.mark.current
 class TestPatchReviewsByReviewId:
     def test_patch_review_by_campsite_id(self, test_db):
         request_body = {
