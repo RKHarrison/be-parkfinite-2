@@ -64,8 +64,8 @@ class CampsiteBase(BaseModel):
 
 
 class CampsiteCreateRequest(CampsiteBase):
+    user_account_id: int
     photos: list[CampsitePhotoCreateRequest] | None = []
-    added_by: str
     category_id: int
     contacts: list[CampsiteContactCreateRequest] | None = []
     facilities: list[Facility] | None = None
@@ -73,11 +73,10 @@ class CampsiteCreateRequest(CampsiteBase):
 
 
 class Campsite(CampsiteBase):
+    user_account_id: int
     photos: list[CampsitePhoto]
-    added_by: str
     campsite_id: int
     category: CampsiteCategory | None = None
-    date_added: str | None = None
     approved: bool = False
     average_rating: float | None = None
 
@@ -86,8 +85,8 @@ class Campsite(CampsiteBase):
 
 
 class CampsiteDetailed(CampsiteBase):
+    user_account_id: int
     photos: list[CampsitePhoto]
-    added_by: str
     campsite_id: int
     category_id: int
     category: CampsiteCategory | None = None

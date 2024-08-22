@@ -327,7 +327,7 @@ class TestPostCampsite:
         assert "contacts" in response.json()['detail'][0]['loc']
 
 
-@pytest.mark.main
+@pytest.mark.current
 class TestGetCampsites:
     def test_read_campsites(self, test_db):
         response = client.get("/campsites")
@@ -338,8 +338,7 @@ class TestGetCampsites:
         for campsite in campsites:
             assert isinstance(campsite['campsite_name'], str)
             assert isinstance(campsite['campsite_id'], int)
-            assert is_valid_date(campsite['date_added'])
-            assert isinstance(campsite['added_by'], str)
+            assert isinstance(campsite['user_account_id'], int)
             assert isinstance(campsite['campsite_longitude'], float)
             assert isinstance(campsite['campsite_latitude'], float)
             assert isinstance(campsite['category']['category_name'], str)
