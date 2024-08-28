@@ -34,11 +34,12 @@ def create_access_token_on_login(db, form_data):
     token = create_access_token(
         user.username, user.user_id, timedelta(minutes=20))
 
-    return {'access_token': token, 'token_type': 'bearer'}
+    return {'access_token': token, 'token_type': 'bearer', 'user_id': user.user_id}
 
 
 def authenticate_user(username: str, password: str, db):
-    user = db.query(User_Credentials).filter(User_Credentials.username == username).first()
+    user = db.query(User_Credentials).filter(
+        User_Credentials.username == username).first()
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
