@@ -23,8 +23,10 @@ class ReviewBase(BaseModel):
 class ReviewPostRequest(ReviewBase):
     pass
 
+
 class ReviewPatchRequest(ReviewBase):
     rating: Annotated[int, Field(ge=1, le=5)] | None = None
+
 
 class ReviewResponse(ReviewBase):
     review_id: int

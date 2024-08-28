@@ -43,6 +43,7 @@ class UserCredentials(UserCredentialsBase):
 class UserAccountBase(BaseModel):
     user_id: int
 
+
 class CreateUserAccountDetails(UserAccountBase):
     user_firstname: str
     user_lastname: str
@@ -59,12 +60,9 @@ class UserAccountDetails(UserAccountBase):
     user_type: str
     camera_permission: bool
 
+
 class UserFavourites(UserAccountBase):
     favourites: list[Campsite] = []
-
-
-
-
 
 
 # NEEDS RENAMING TO FavouriteUserCampsite

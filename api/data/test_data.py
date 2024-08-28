@@ -75,6 +75,6 @@ def get_test_data():
                          user_lastname="Greenwood", user_email="clara.fanatic@example.com")
         ],
         'user_campsite_favourites': [
-            [1,3],[1,1]
+            [1, 3], [1, 1]
         ]
     }

@@ -5,8 +5,8 @@ from api.utils.security.password_utils import hash_password
 
 
 def convert_string_env_var_to_bytes(environnment_varaiable):
-# Retrieves a bytes-like string from environment variables 
-# and converts it to bytes to create mock databse data
+    # Retrieves a bytes-like string from environment variables
+    # and converts it to bytes to create mock databse data
     string = os.getenv(environnment_varaiable)
     if string.startswith("b'") and string.endswith("'"):
         try:

@@ -9,16 +9,20 @@ from api.models.campsite_models import Campsite
 
 
 def read_user_account_by_user_id(db, user_id):
-    user_account = db.query(User_Account).filter(User_Account.user_id == user_id).first()
+    user_account = db.query(User_Account).filter(
+        User_Account.user_id == user_id).first()
     if not user_account:
-        raise HTTPException(status_code=404, detail="404 - User Account Not Found!")
+        raise HTTPException(
+            status_code=404, detail="404 - User Account Not Found!")
     return user_account
 
 
 def update_user_xp(db, user_id, xp):
-    user_account = db.query(User_Account).filter(User_Account.user_id == user_id).first()
+    user_account = db.query(User_Account).filter(
+        User_Account.user_id == user_id).first()
     if not user_account:
-        raise HTTPException(status_code=404, detail="404 - User Account Not Found!")
+        raise HTTPException(
+            status_code=404, detail="404 - User Account Not Found!")
 
     try:
         if xp.startswith('-'):
@@ -35,9 +39,11 @@ def update_user_xp(db, user_id, xp):
 
 
 def create_user_favourite_campsite(db, user_id, campsite_id):
-    user = db.query(User_Account).filter(User_Account.user_id == user_id).first()
+    user = db.query(User_Account).filter(
+        User_Account.user_id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="404 - User Account Not Found!")
+        raise HTTPException(
+            status_code=404, detail="404 - User Account Not Found!")
 
     campsite = db.get(Campsite, campsite_id)
     if not campsite:
@@ -50,16 +56,20 @@ def create_user_favourite_campsite(db, user_id, campsite_id):
 
 
 def read_user_campsite_favourites_by_user_id(db, user_id: str):
-    user_account = db.query(User_Account).filter(User_Account.user_id == user_id).first()
+    user_account = db.query(User_Account).filter(
+        User_Account.user_id == user_id).first()
     if not user_account:
-        raise HTTPException(status_code=404, detail="404 - User Account Not Found!")
+        raise HTTPException(
+            status_code=404, detail="404 - User Account Not Found!")
     return user_account.favourites
 
 
 def remove_user_favourite_campsite(db, user_id, campsite_id):
-    user_account = db.query(User_Account).filter(User_Account.user_id == user_id).first()
+    user_account = db.query(User_Account).filter(
+        User_Account.user_id == user_id).first()
     if not user_account:
-        raise HTTPException(status_code=404, detail="404 - User Account Not Found!")
+        raise HTTPException(
+            status_code=404, detail="404 - User Account Not Found!")
 
     campsite = db.get(Campsite, campsite_id)
     if not campsite:

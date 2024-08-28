@@ -38,7 +38,8 @@ class Campsite(Base):
     approved = Column(Boolean, default=False)
 
     # relationship to the user who posted the campsite
-    user_account_id = Column(Integer, ForeignKey("user_accounts.user_account_id"))
+    user_account_id = Column(Integer, ForeignKey(
+        "user_accounts.user_account_id"))
     user_account = relationship("User_Account", back_populates="campsites")
 
     category_id = Column(Integer, ForeignKey("categories.category_id"))

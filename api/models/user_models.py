@@ -19,7 +19,7 @@ class User_Credentials(Base):
     user_id = Column(Integer, primary_key=True, index=True)
     username = Column(String(30), unique=True)
     hashed_password = Column(LargeBinary)
- 
+
 
 class User_Account(Base):
     __tablename__ = "user_accounts"
@@ -35,5 +35,7 @@ class User_Account(Base):
 
     favourites: Mapped[List["Campsite"]] = relationship(
         'Campsite', secondary=user_campsite_favourites, back_populates='favourited_by')
-    reviews = relationship("Review", back_populates="user_account", lazy='dynamic')
-    campsites = relationship("Campsite", back_populates="user_account", lazy='dynamic')
+    reviews = relationship(
+        "Review", back_populates="user_account", lazy='dynamic')
+    campsites = relationship(
+        "Campsite", back_populates="user_account", lazy='dynamic')

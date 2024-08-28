@@ -52,7 +52,7 @@ def get_single_model_seed_test_data():
                 facilities_cost=5.00,
                 description="A lovely spot for sunrise views",
                 date_added=datetime.now().isoformat(),
-               user_account_id=1,
+                user_account_id=1,
                 category_id=1
             ),
             Campsite(
@@ -189,10 +189,10 @@ def get_complete_seed_test_data():
         ],
         'user_accounts': [
             User_Account(user_id=1, user_firstname="Alice", user_lastname="Wanderlust",
-                 user_email="alice@example.com", xp=500, user_type="NORMAL", camera_permission=True),
+                         user_email="alice@example.com", xp=500, user_type="NORMAL", camera_permission=True),
             User_Account(user_id=2, user_firstname="Bob", user_lastname="Hills",
-                 user_email="bob92@example.com", xp=0, user_type="NORMAL", camera_permission=True),
+                         user_email="bob92@example.com", xp=0, user_type="NORMAL", camera_permission=True),
             User_Account(user_id=3, user_firstname="Clara", user_lastname="Greenwood",
-                 user_email="clara.fanatic@example.com", xp=0, user_type="NORMAL", camera_permission=True)
+                         user_email="clara.fanatic@example.com", xp=0, user_type="NORMAL", camera_permission=True)
         ]
     }

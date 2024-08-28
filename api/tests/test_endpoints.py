@@ -715,7 +715,7 @@ class TestGetUserAccountByUserId:
     def test_read_user_account_by_user_id(self, test_db):
         response = client.get('/users/1')
         assert response.status_code == 200
-        
+
         user_account = response.json()
         assert isinstance(user_account["user_account_id"], int)
         assert isinstance(user_account["user_id"], int)
