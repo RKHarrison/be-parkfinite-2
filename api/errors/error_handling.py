@@ -15,8 +15,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     for error in errors:
         error_location = error['loc'][-1].capitalize()
         trimmed_default_error_message = ' '.join(error['msg'].split(' ')[1:])
-        user_readable_error_message = f"{error_location} {
-            trimmed_default_error_message}"
+        user_readable_error_message = f"{error_location} {trimmed_default_error_message}"
         formatted_errors.append({
             "loc": error['loc'],
             "msg": user_readable_error_message,
