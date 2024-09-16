@@ -31,7 +31,7 @@ class ReviewPatchRequest(ReviewBase):
 class ReviewResponse(ReviewBase):
     review_id: int
     campsite_id: int
-    user_account_id: int
+    username: str
     rating: Annotated[int, Field(ge=1, le=5)]
 
 
