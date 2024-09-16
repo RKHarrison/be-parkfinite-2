@@ -86,6 +86,7 @@ class Campsite(CampsiteBase):
 
 class CampsiteDetailed(CampsiteBase):
     user_account_id: int
+    username: str
     photos: list[CampsitePhoto]
     campsite_id: int
     category_id: int

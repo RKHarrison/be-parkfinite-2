@@ -13,16 +13,16 @@ def create_review_by_campsite_id(db, campsite_id: int, request: ReviewPostReques
         raise HTTPException(
             status_code=404, detail="404 - Campsite Not Found!")
 
-    user = db.query(User_Account).filter(
-        User_Account.user_account_id == request.user_account_id).first()
-    if not user:
+    userCredentials = db.query(User_Credentials).filter(
+        User_Credentials.user_account_id == request.user_account_id).first()
+    if not userCredentials:
         raise HTTPException(status_code=404, detail="404 - User Not Found!")
 
     new_review = Review(
         campsite_id=campsite_id,
         rating=request.rating,
         comment=request.comment,
-        user_account_id=request.user_account_id
+        username=userCredentials.username
     )
     db.add(new_review)
     db.commit()
