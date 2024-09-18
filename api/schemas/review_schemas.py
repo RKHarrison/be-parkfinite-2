@@ -19,6 +19,9 @@ class ReviewBase(BaseModel):
             raise ValueError('String should have at most 350 characters')
         return comment
 
+    class Config:
+        from_attributes = True
+
 
 class ReviewPostRequest(ReviewBase):
     pass
@@ -31,15 +34,13 @@ class ReviewPatchRequest(ReviewBase):
 class ReviewResponse(ReviewBase):
     review_id: int
     campsite_id: int
-    user_account_id: int
+    username: str
     rating: Annotated[int, Field(ge=1, le=5)]
 
 
 class Review(ReviewBase):
     review_id: int
     campsite_id: int
+    user_account_id: int
     username: str
     rating: Annotated[int, Field(ge=1, le=5)]
-
-    class ConfigDict:
-        from_attributes = True

@@ -6,35 +6,43 @@ from api.schemas.review_schemas import ReviewPostRequest, ReviewPatchRequest
 from api.utils.update_campsite_average_rating import update_campsite_average_rating
 
 
-def create_review_by_campsite_id(db, campsite_id: int, request: ReviewPostRequest):
-    campsite = db.query(Campsite).filter(
-        Campsite.campsite_id == campsite_id).first()
+def create_review_by_campsite_id(db, campsite_id, request: ReviewPostRequest):
+    campsite = db.get(Campsite, campsite_id)
     if not campsite:
         raise HTTPException(
             status_code=404, detail="404 - Campsite Not Found!")
 
-    user_account = db.query(User_Account).filter(
-        User_Account.user_account_id == request.user_account_id).first()
-    if not user_account:
-        raise HTTPException(status_code=404, detail="404 - User Account Not Found!")
-
-    user_credentials = db.query(User_Credentials).filter(
-        User_Credentials.user_id == user_account.user_id).first()
-    if not user_credentials:
-        raise HTTPException(status_code=404, detail="404 - User Credentials Not Found!")
-
     new_review = Review(
-        campsite_id=campsite_id,
         rating=request.rating,
         comment=request.comment,
-        username=user_credentials.username
+        campsite_id=campsite_id,
+        user_account_id=request.user_account_id
     )
     db.add(new_review)
     db.commit()
     db.refresh(new_review)
-    update_campsite_average_rating(db, campsite_id, Campsite, Review)
 
-    return new_review
+    username = db.query(User_Credentials.username).join(
+        User_Account, User_Account.user_id == User_Credentials.user_id
+    ).filter(
+        User_Account.user_account_id == new_review.user_account_id
+    ).first()
+
+    if not username:
+        raise HTTPException(
+            status_code=404, detail="Username not found for this review."
+        )
+
+    review_data = {
+        "review_id": new_review.review_id,
+        "campsite_id": campsite_id,
+        "rating": new_review.rating,
+        "comment": new_review.comment,
+        "user_account_id": new_review.user_account_id,
+        "username": username[0],
+    }
+
+    return review_data
 
 
 def read_reviews_by_campsite_id(db, id: int):

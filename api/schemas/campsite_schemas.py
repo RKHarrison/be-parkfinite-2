@@ -7,6 +7,9 @@ from api.utils.date_stamp import date_stamp
 class CampsitePhotoBase(BaseModel):
     campsite_photo_url: str
 
+    class Config:
+        from_attributes = True
+
 
 class CampsitePhotoCreateRequest(CampsitePhotoBase):
     pass
@@ -16,14 +19,14 @@ class CampsitePhoto(CampsitePhotoBase):
     campsite_photo_id: int
     campsite_id: int
 
-    class ConfigDict:
-        from_attributes = True
-
 
 class CampsiteContactBase(BaseModel):
     campsite_contact_name: str
     campsite_contact_phone: str
     campsite_contact_email: str | None = None
+
+    class Config:
+        from_attributes = True
 
 
 class CampsiteContactCreateRequest(CampsiteContactBase):
@@ -34,13 +37,14 @@ class CampsiteContact(CampsiteContactBase):
     campsite_contact_id: int
     campsite_id: int
 
-    class ConfigDict:
-        from_attributes = True
 
 
 class CampsiteCategoryBase(BaseModel):
     category_name: str
     category_img_url: str
+
+    class Config:
+        from_attributes = True
 
 
 class CampsiteCategoryCreate(CampsiteCategoryBase):
@@ -62,6 +66,9 @@ class CampsiteBase(BaseModel):
     opening_month: str | None = None
     closing_month: str | None = None
 
+    class Config:
+        from_attributes = True
+
 
 class CampsiteCreateRequest(CampsiteBase):
     user_account_id: int
@@ -71,7 +78,6 @@ class CampsiteCreateRequest(CampsiteBase):
     facilities: list[Facility] | None = None
     activities: list[Activity] | None = None
 
-
 class Campsite(CampsiteBase):
     user_account_id: int
     photos: list[CampsitePhoto]
@@ -80,7 +86,7 @@ class Campsite(CampsiteBase):
     approved: bool = False
     average_rating: float | None = None
 
-    class ConfigDict:
+    class Config:
         from_attributes = True
 
 
@@ -89,13 +95,9 @@ class CampsiteDetailed(CampsiteBase):
     username: str
     photos: list[CampsitePhoto]
     campsite_id: int
-    category_id: int
     category: CampsiteCategory | None = None
     date_added: str
     approved: bool = False
     facilities: list[Facility] | None = None
     activities: list[Activity] | None = None
     average_rating: float | None = None
-
-    class ConfigDict:
-        from_attributes = True
