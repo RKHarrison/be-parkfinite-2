@@ -6,7 +6,7 @@ import re
 class UserCredentialsBase(BaseModel):
     username: str
 
-    class ConfigDict:
+    class Config:
         from_attributes = True
 
     @field_validator('username')
@@ -35,6 +35,9 @@ class CreateUserCredentialsRequest(UserCredentialsBase):
                 'Password must include at least one special character.')
         return password
 
+    class Config:
+        from_attributes = True
+
 
 class UserCredentials(UserCredentialsBase):
     user_id: int
@@ -42,6 +45,9 @@ class UserCredentials(UserCredentialsBase):
 
 class UserAccountBase(BaseModel):
     user_id: int
+
+    class Config:
+        from_attributes = True
 
 
 class CreateUserAccountDetails(UserAccountBase):
@@ -64,11 +70,18 @@ class UserAccountDetails(UserAccountBase):
 class UserFavourites(UserAccountBase):
     favourites: list[Campsite] = []
 
+    class Config:
+        from_attributes = True
 
 # NEEDS RENAMING TO FavouriteUserCampsite
+
+
 class UserCampsiteBase(BaseModel):
     user_id: str
     campsite_id: int
+
+    class Config:
+        from_attributes = True
 
 
 class CreateUserCampsite(UserCampsiteBase):
