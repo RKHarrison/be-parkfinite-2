@@ -1,12 +1,14 @@
 import uvicorn
 from os import getenv
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError, HTTPException
 from sqlalchemy.exc import SQLAlchemyError
 from starlette import status
 
 from database.database import engine, Base
 from database.database_utils.get_db import get_db
+
 from api.errors.error_handling import (
     validation_exception_handler, attribute_error_handler,  http_exception_handler, sqlalchemy_exception_handler)
 
@@ -17,6 +19,18 @@ import api.routes.users as users_route
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+# CORS
+origins = [
+    'http://localhost:8081'  # localhost address for development
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 app.include_router(auth_route.router)
 app.include_router(campsites_route.router)
